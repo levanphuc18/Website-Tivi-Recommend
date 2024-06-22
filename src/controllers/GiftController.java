@@ -36,6 +36,7 @@ import entities.CustomerEntity;
 import entities.FavoriteProductEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
+import models.BcryptEncryption;
 import models.ChangePasswordModel;
 import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
@@ -52,6 +53,9 @@ public class GiftController {
 	SessionFactory factory;
 	@Autowired
 	Mailer mailer;
+	
+	// thực tập mã hóa Bcrypt
+	BcryptEncryption encryption = new BcryptEncryption();
 	
 	
 //	// LƯU ĐÁNH GIÁ 
@@ -394,13 +398,19 @@ public class GiftController {
 		Methods method = new Methods(factory);
 		
 		// thực tập md5
-		Md5Encryption encryption = new Md5Encryption();
-		String password = encryption.convertHashToString(account.getPassword());
+//		Md5Encryption encryption = new Md5Encryption();
+//		String password = encryption.convertHashToString(account.getPassword());
+		
+		// thực tập Bcrypt
+		BcryptEncryption encryption = new BcryptEncryption();
+		
+		String password = account.getPassword();
+		String storedHash = method.getPasswordOfCustomerWithUsername(account.getUsername());
 		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if (!method.isCustomerWithUsernameExit(account.getUsername())) {
 			errors.rejectValue("username", "account", "Tên đăng nhập không tồn tại!");
-		} else if (!password.equals(method.getPasswordOfCustomerWithUsername(account.getUsername()))) {
+		} else if (!encryption.verifyPassword(password, storedHash)) {
 			errors.rejectValue("password", "account", "Mật khẩu không đúng!");
 		}
 		if (errors.hasErrors()) {
@@ -440,8 +450,8 @@ public class GiftController {
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		
 		// thực tập md5
-		Md5Encryption encryption = new Md5Encryption();
-		String passwword = encryption.convertHashToString(customer.getPassword());
+//		Md5Encryption encryption = new Md5Encryption();
+		String passwword = encryption.hashPassword(customer.getPassword());
 		
 		
 		if (customer.getUsername().trim().length() == 0) {
@@ -645,29 +655,34 @@ public class GiftController {
 
 	
 	// thực tập md5
+	// thực tập Bcrypt
+//	encryption.verifyPassword(password, storedHash
 	@RequestMapping(value = "/user-info/change-password", method = RequestMethod.POST)
 	public String changePassword2(ModelMap model, @ModelAttribute("customer") ChangePasswordModel customer,
 			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
 		Methods method = new Methods(factory);
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		
-		Md5Encryption encryption = new Md5Encryption();
-		String oldPassword = encryption.convertHashToString(customer.getOldPassword());
-		String newPassword = encryption.convertHashToString(customer.getNewPassword());
-		String confirmNewPassword = encryption.convertHashToString(customer.getConfirmNewPassword());
+//		Md5Encryption encryption = new Md5Encryption();
+		
+		String oldPassword = customer.getOldPassword();
+		String newPassword = customer.getNewPassword();
+		String confirmNewPassword = customer.getConfirmNewPassword();
+		
+		String password = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getPassword().trim();
+		
 		
 		if (oldPassword.trim().length() == 0) {
 			errors.rejectValue("oldPassword", "customer", "Vui lòng nhập mật khẩu cũ!");
-		} else if (!oldPassword.trim().equals(method
-				.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getPassword().trim())) {
+		} else if (!encryption.verifyPassword(oldPassword, password)) {
 			errors.rejectValue("oldPassword", "customer", "Mật khẩu cũ không đúng!");
 		}
 		if (newPassword.trim().length() == 0) {
 			errors.rejectValue("newPassword", "customer", "Vui lòng nhập mật khẩu mới!");
-		} else if (oldPassword.trim().equals(newPassword.trim())) {
+		} else if (encryption.verifyPassword(newPassword, password)) {
 			errors.rejectValue("newPassword", "customer", "Mật khẩu mới không được trùng với mật khẩu cũ!");
 		}
-		if (!confirmNewPassword.trim().equals(newPassword.trim())
+		if (!customer.getConfirmNewPassword().trim().equals(customer.getNewPassword().trim())
 				|| confirmNewPassword.trim().length() == 0) {
 			errors.rejectValue("confirmNewPassword", "customer", "Xác nhận mật khẩu không khớp!");
 		}
@@ -680,7 +695,8 @@ public class GiftController {
 			return "store/user-change-password";
 		} else {
 			CustomerEntity ce = new CustomerEntity();
-			ce.setPassword(confirmNewPassword);
+			String passwordHash = encryption.hashPassword(customer.getConfirmNewPassword());
+			ce.setPassword(passwordHash);
 //			model.addAttribute("message", "Chúc mừng, bạn đã nhập đúng!");
 			if (method.updateCustomerPassword(ce, httpSession)) {
 				System.out.println("Cập nhật mật khẩu thành công");
