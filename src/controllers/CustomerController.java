@@ -58,11 +58,11 @@ public class CustomerController {
 		customerDAO = new CustomerDAO(factory);
 		if (search != null) {
 			customers = customerDAO.searchForCustomer(search);
-			model.addAttribute("pagedLink", "/admin/categories?search=" + search);
+			model.addAttribute("pagedLink", "/admin/customers?search=" + search);
 
 		} else {
 			customers = customerDAO.getCustomers();
-			model.addAttribute("pagedLink", "/admin/categories");
+			model.addAttribute("pagedLink", "/admin/customers");
 		}
 
 		PagedListHolder pagedListHolder = Pagination.customerPagination(request, customers.getList(), 10, 10);

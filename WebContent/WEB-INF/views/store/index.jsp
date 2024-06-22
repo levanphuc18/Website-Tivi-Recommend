@@ -51,13 +51,13 @@
 					alt="" class="w-full h-full"></a>
 			</div>
 		</div>
-		
-					
-				
-				
-				<!-- LƯỢT XEM NHIỀUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU	 -->	
-		
-		
+
+
+
+
+		<!-- LƯỢT XEM NHIỀUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU	 -->
+
+
 		<div class="main__new-product section px-32 my-16">
 			<div class="section__heading mb-8">
 				<h3>
@@ -79,8 +79,8 @@
 								<div
 									class="flex justify-center bg-indigo-300 items-center py-1 absolute item__menu w-full">
 									<%-- <a href="store/insert-to-favlist/${p.id}"> --%>
-									<a href="store/insert-to-favlist/${p.id}/index"> <c:set var="contains"
-											value="false" /> <c:forEach var="fav"
+									<a href="store/insert-to-favlist/${p.id}/index"> <c:set
+											var="contains" value="false" /> <c:forEach var="fav"
 											items="${listFavorite}">
 											<c:if test="${fav.product.id eq p.id}">
 												<c:set var="contains" value="true" />
@@ -105,6 +105,17 @@
 							<span class="item__price font-bold"><fmt:setLocale
 									value="vi_VN" scope="session" /> <fmt:formatNumber
 									value="${p.price}" type="currency" /></span>
+
+
+							<ul class="list-inline product-ratings">
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+							</ul>
+
+
 							<c:if test="${p.quantity <= 0}">
 								<span class="p-1 ml-1 bg-gray-500 text-white">Hết hàng</span>
 							</c:if>
@@ -114,8 +125,8 @@
 					</div>
 
 				</c:forEach>
-				
-				
+
+
 				<!--
 				<div class="list__see-more w-full text-center mt-1">
 					<a href="store/all"
@@ -123,14 +134,14 @@
 						thêm</a>
 				</div>
 				
-				-->	
-				
-			</div>	
+				-->
+
+			</div>
 		</div>
-		
-				<!-- LƯỢT XEM NHIỀUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU	 -->		
-		
-		
+
+		<!-- LƯỢT XEM NHIỀUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU	 -->
+
+
 		<div class="main__new-product section px-32 my-16">
 			<div class="section__heading mb-8">
 				<h3>
@@ -152,8 +163,8 @@
 								<div
 									class="flex justify-center bg-indigo-300 items-center py-1 absolute item__menu w-full">
 									<%-- <a href="store/insert-to-favlist/${p.id}"> --%>
-									<a href="store/insert-to-favlist/${p.id}/index"> <c:set var="contains"
-											value="false" /> <c:forEach var="fav"
+									<a href="store/insert-to-favlist/${p.id}/index"> <c:set
+											var="contains" value="false" /> <c:forEach var="fav"
 											items="${listFavorite}">
 											<c:if test="${fav.product.id eq p.id}">
 												<c:set var="contains" value="true" />
@@ -178,6 +189,15 @@
 							<span class="item__price font-bold"><fmt:setLocale
 									value="vi_VN" scope="session" /> <fmt:formatNumber
 									value="${p.price}" type="currency" /></span>
+
+							<ul class="list-inline product-ratings">
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+								<li><i class="rating fa fa-star"></i></li>
+							</ul>
+
 							<c:if test="${p.quantity <= 0}">
 								<span class="p-1 ml-1 bg-gray-500 text-white">Hết hàng</span>
 							</c:if>
@@ -193,20 +213,26 @@
 						thêm</a>
 				</div>
 			</div>
-			
+
 		</div>
-		
-				<!-- DDDDĐAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA	 -->	
-		
-		
-		
+
+		<!-- DDDDĐAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA	 -->
+
+
+
 	</main>
+
+	
 	<%@include file="/WEB-INF/views/store/include/store-footer.jsp"%>
 	<script
 		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<!-- <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script> -->
 	<!-- <script src="./assets/js/main.js"></script> -->
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
+	
+
+	
+	
 </body>
 
 </html>

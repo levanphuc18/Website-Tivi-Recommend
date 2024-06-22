@@ -22,6 +22,7 @@ import entities.FavoriteProductEntity;
 import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
+import models.Md5Encryption;
 
 public class Methods {
 	
@@ -184,6 +185,8 @@ public class Methods {
 	// Cập nhập mật khẩu khách hàng
 	public boolean updateCustomerPassword(CustomerEntity customer, HttpSession httpSession) {
 		Session session = factory.getCurrentSession();
+		
+		
 		String hql = "UPDATE CustomerEntity c SET c.password=:password WHERE c.id=:id";
 		Query query = session.createQuery(hql).setParameter("id",
 				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
@@ -439,6 +442,15 @@ public class Methods {
 		return admin != null;
 	}
 
+//	public String getPasswordOfCustomerWithUsername(String username) {
+//		Session session = factory.getCurrentSession();
+//		String hql = "SELECT c.password FROM CustomerEntity c WHERE c.username=:username";
+//		Query query = session.createQuery(hql);
+//		String password = (String) query.setParameter("username", username).uniqueResult();
+//		return password;
+//	}
+	
+	// thực tập
 	public String getPasswordOfCustomerWithUsername(String username) {
 		Session session = factory.getCurrentSession();
 		String hql = "SELECT c.password FROM CustomerEntity c WHERE c.username=:username";
@@ -446,6 +458,8 @@ public class Methods {
 		String password = (String) query.setParameter("username", username).uniqueResult();
 		return password;
 	}
+	
+	
 	public String getEmailOfCustomerWithUsername(String username) {
 		Session session = factory.getCurrentSession();
 		String hql = "SELECT c.email FROM CustomerEntity c WHERE c.username=:username";

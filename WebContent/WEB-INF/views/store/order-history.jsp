@@ -68,7 +68,8 @@
 					</div>
 					<div class="mb-1">
 						<a href="${applicationScope.userFavoritePage}"
-							class="hover:text-indigo-500 transition-colors">Sản phẩm đã thích</a>
+							class="hover:text-indigo-500 transition-colors">Sản phẩm
+							đã thích</a>
 					</div>
 					<div class="mb-1">
 						<span href="${applicationScope.orderHistoryPage}"
@@ -133,36 +134,71 @@
 							</c:forEach>
 						</table> --%>
 						<div class="order-row flex justify-between">
-							<div class="order-cell flex-1 p-2 border font-bold">Sản phẩm</div>
-							<div class="order-cell w-1/6 p-2 border text-center align-middle font-bold">Số lượng</div>
-							<div class="order-cell w-1/5 p-2 border text-center align-middle font-bold">Thành tiền</div>
+							<div class="order-cell flex-1 p-2 border font-bold">Sản
+								phẩm</div>
+
+							<div
+								class="order-cell w-1/6 p-2 border text-center align-middle font-bold">Số
+								lượng</div>
+							<div
+								class="order-cell w-1/5 p-2 border text-center align-middle font-bold">Thành
+								tiền</div>
+							<div
+								class="order-cell w-1/6 p-2 border text-center align-middle font-bold">Đánh
+								giá</div>
 						</div>
 						<c:forEach var="order" items="${listOrder}" varStatus="loop">
 							<p class="p-2 text-indigo-500 font-bold">${loop.index+1}.</p>
-							
-								<c:forEach var="c" items="${order.orderDetails}">
+
+							<c:forEach var="c" items="${order.orderDetails}">
 								<div class="order-row flex">
-									<div class="order-cell flex-1 p-2 border"><a
-												href="${applicationScope.productDetailPage}/${c.product.id}"
-												class="hover:text-indigo-500">${c.product.name}</a><br>
-												<div class="cart-list__price text-sm">
-													Đơn giá: <span class="font-bold"><fmt:setLocale
-															value="vi_VN" scope="session" /> <fmt:formatNumber
-															value="${c.product.price}" type="currency" /></span>
-												</div></div>
-									<div class="order-cell w-1/6 p-2 border text-center align-middle">${c.quantity}</div>
-									<div class="order-cell w-1/5 p-2 border text-center align-middle"><fmt:setLocale
+									<div class="order-cell flex-1 p-2 border">
+										<a
+											href="${applicationScope.productDetailPage}/${c.product.id}"
+											class="hover:text-indigo-500">${c.product.name}</a><br>
+										<div class="cart-list__price text-sm">
+											Đơn giá: <span class="font-bold"><fmt:setLocale
 													value="vi_VN" scope="session" /> <fmt:formatNumber
-													value="${c.quantity*c.product.price}" type="currency" /></div>
+													value="${c.product.price}" type="currency" /></span>
+										</div>
+									</div>
+
+
+
+
+									<div
+										class="order-cell w-1/6 p-2 border text-center align-middle">${c.quantity}</div>
+									<div
+										class="order-cell w-1/5 p-2 border text-center align-middle">
+										<fmt:setLocale value="vi_VN" scope="session" />
+										<fmt:formatNumber value="${c.quantity*c.product.price}"
+											type="currency" />
+									</div>
+
+
+									<!-- Rating Phuc -->
+									<div
+										class="order-cell w-1/6 p-2 border text-center align-middle">
+										<ul class="list-inline product-ratings">
+											<li><i class="rating fa fa-star"></i></li>
+											<li><i class="rating fa fa-star"></i></li>
+											<li><i class="rating fa fa-star"></i></li>
+											<li><i class="rating fa fa-star"></i></li>
+											<li><i class="rating fa fa-star"></i></li>
+										</ul>
+									</div>
 								</div>
-								</c:forEach>
-							
+
+
+
+							</c:forEach>
+
 							<div class="w-full flex justify-between my-1 p-2">
-									<span class="">Tổng cộng:</span><span class="font-bold"><fmt:setLocale
-											value="vi_VN" scope="session" /><fmt:formatNumber
-											value="${order.totalPrice}" type="currency" /></span>
-								</div>
-								<div class="w-full border-b border-black"></div>
+								<span class="">Tổng cộng:</span><span class="font-bold"><fmt:setLocale
+										value="vi_VN" scope="session" />
+									<fmt:formatNumber value="${order.totalPrice}" type="currency" /></span>
+							</div>
+							<div class="w-full border-b border-black"></div>
 						</c:forEach>
 					</div>
 				</div>
@@ -185,6 +221,69 @@
 				e.target.style.display = "none";
 			})
 		}
+	</script>
+
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script>
+		$(document)
+				.ready(
+						function() {
+							// Bắt sự kiện click vào bất kỳ ngôi sao nào trong danh sách đánh giá
+							$(".product-ratings li")
+									.click(
+											function() {
+												var clickedIndex = $(this)
+														.index() + 1; // Chỉ số của sao được click (bắt đầu từ 0)
+
+												// Đặt lại màu sắc cho tất cả các sao để chúng trở về màu xám
+												$(this).siblings().find(
+														".rating").removeClass(
+														"rating-selected");
+
+												// Đặt màu sắc cho các sao từ đầu đến sao được click thành màu vàng
+												$(this)
+														.prevAll()
+														.addBack()
+														.find(".rating")
+														.addClass(
+																"rating-selected");
+
+												// Lấy id sản phẩm từ thuộc tính data-product-id của phần tử cha
+												var productId = $(this)
+														.closest(
+																'.product-item')
+														.data('product-id');
+
+												// Gọi AJAX để gửi dữ liệu đánh giá lên server
+												$
+														.ajax({
+															url : "submit-rating.php", // Đường dẫn tới file xử lý AJAX (chỉnh sửa tùy theo cấu trúc của bạn)
+															method : "POST",
+															data : {
+																productId : productId,
+																rating : clickedIndex
+															},
+															success : function(
+																	response) {
+																console
+																		.log("Đã gửi đánh giá thành công.");
+																// Xử lý phản hồi từ server nếu cần thiết
+															},
+															error : function(
+																	xhr,
+																	status,
+																	error) {
+																console
+																		.error(
+																				"Lỗi khi gửi đánh giá:",
+																				error);
+																// Xử lý lỗi nếu có
+															}
+														});
+											});
+						});
 	</script>
 </body>
 
