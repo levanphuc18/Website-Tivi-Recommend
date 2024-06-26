@@ -451,9 +451,10 @@ public class GiftController {
 		
 		// thực tập md5
 //		Md5Encryption encryption = new Md5Encryption();
+		
+		// mã hóa Bcrypt
 		String passwword = encryption.hashPassword(customer.getPassword());
-		
-		
+
 		if (customer.getUsername().trim().length() == 0) {
 			errors.rejectValue("username", "customer", "Vui lòng nhập tên đăng nhập!");
 		} else if (customer.getUsername().trim().length() < 4) {

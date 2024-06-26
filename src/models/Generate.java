@@ -5,6 +5,7 @@ import java.util.Random;
 
 import entities.AdminEntity;
 import entities.CategoryEntity;
+import entities.ConfigEntity;
 import entities.InvoiceEntity;
 import entities.ProductEntity;
 
@@ -61,12 +62,31 @@ public class Generate {
 		}
 		return null;
 	}
+	
+	// GENERATE AND CHECK CONFIG ID thực tập
+		public static ConfigEntity searchConfig(List<ConfigEntity> configs, String id) {
+			for (ConfigEntity config : configs) {
+				if (config.getId().equals(id))
+					return config;
+			}
+			return null;
+		}
 
 	public static String generateCategoryId(List<CategoryEntity> categories) {
 		String generatedString = null;
 		do {
 			generatedString = "C" + generateId(4);
 		} while (searchCategory(categories, generatedString) != null);
+
+		return generatedString;
+	}
+	
+	// thực tập
+	public static String generateConfigId(List<ConfigEntity> configs) {
+		String generatedString = null;
+		do {
+			generatedString = "C" + generateId(4);
+		} while (searchConfig(configs, generatedString) != null);
 
 		return generatedString;
 	}

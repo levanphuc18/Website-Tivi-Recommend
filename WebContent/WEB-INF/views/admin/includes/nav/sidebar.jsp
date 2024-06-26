@@ -36,7 +36,7 @@
                     <img src="<c:url value='/resources/admin/assets/img/team/profile-picture-3.jpg' />" class="card-img-top rounded-circle border-white" alt="Bonnie Green" />
                 </div>
                 <div class="d-block">
-                    <h2 class="h5 mb-3">Hi, Jane</h2>
+                    <h2 class="h5 mb-3">Hi,</h2>
                     <a href="admin/sign-in.html" class="btn btn-secondary btn-sm d-inline-flex align-items-center">
                         <svg class="icon icon-xxs me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -145,6 +145,38 @@
                         <li class="nav-item">
                             <a class="nav-link" href="${applicationScope.addCategoryPage}">
                                 <span class="sidebar-text">Thêm danh mục</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <!-- Config Manager -->
+            <li class="nav-item">
+                <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#subconfig-pages">
+                    <span>
+                        <span class="sidebar-icon">
+                            <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        </span>
+                        <span class="sidebar-text">Cấu hình</span>
+                    </span>
+                    <span class="link-arrow">
+                        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                </span>
+                <div class="multi-level collapse" role="list" id="subconfig-pages" aria-expanded="false">
+                    <ul class="flex-column nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="${applicationScope.configPage}">
+                                <span class="sidebar-text">Quản Lý</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="${applicationScope.addConfigPage}">
+                                <span class="sidebar-text">Thêm cấu hình</span>
                             </a>
                         </li>
                     </ul>

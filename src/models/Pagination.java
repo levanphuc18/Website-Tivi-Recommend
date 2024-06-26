@@ -8,6 +8,7 @@ import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.ServletRequestUtils;
 
 import entities.CategoryEntity;
+import entities.ConfigEntity;
 import entities.CustomerEntity;
 import entities.InvoiceDetailEntity;
 import entities.InvoiceEntity;
@@ -32,6 +33,17 @@ public class Pagination {
 	public static PagedListHolder categoryPagination(HttpServletRequest request, List<CategoryEntity> categories,
 			int maxLinkedPages, int pageSize) {
 		PagedListHolder pagedListHolder = new PagedListHolder(categories);
+		int page = ServletRequestUtils.getIntParameter(request, "p", 0);
+		pagedListHolder.setPage(page);
+		pagedListHolder.setMaxLinkedPages(maxLinkedPages);
+		pagedListHolder.setPageSize(pageSize);
+		return pagedListHolder;
+	}
+
+	// CONFIG PAGINATION
+	public static PagedListHolder configPagination(HttpServletRequest request, List<ConfigEntity> configs,
+			int maxLinkedPages, int pageSize) {
+		PagedListHolder pagedListHolder = new PagedListHolder(configs);
 		int page = ServletRequestUtils.getIntParameter(request, "p", 0);
 		pagedListHolder.setPage(page);
 		pagedListHolder.setMaxLinkedPages(maxLinkedPages);

@@ -18,7 +18,7 @@
 	<bean id="dataSource" 
 	    	class="org.springframework.jdbc.datasource.DriverManagerDataSource"
 			p:driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-			p:url="jdbc:sqlserver://LEVANPHUC:1433; Database=WebsiteTiviRecommend"
+			p:url="jdbc:sqlserver://LEVANPHUC:1433; Database=StoreTivi"
 			p:username="sa"
 			p:password="sa">
 	</bean>

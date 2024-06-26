@@ -25,7 +25,7 @@
 	</bean>-->
 	<!-- Phuc chua sua o day -->
 	<bean id="uploadFile" class="models.UploadFile">
-		<property name="uploadResourcePath" value="C:\Users\levan\OneDrive\Desktop\TTCS\webbantivi1\webbantivi\WebContent\resources\uploads\"></property>
+		<property name="uploadResourcePath" value="D:\JAVA\Eclipse\Doanthuctap\webbantivi\WebContent\resources\uploads\"></property>
 	</bean>
 </beans>
 
