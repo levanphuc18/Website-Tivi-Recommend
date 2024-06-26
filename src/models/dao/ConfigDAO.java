@@ -43,6 +43,7 @@ public class ConfigDAO extends DAO {
 		Query query = session.createQuery(hql);
 		List<ConfigEntity> list = query.list();
 		Configs configs = new Configs(list);
+//		System.out.println(configs + "PHUC");
 		session.close();
 		return configs;
 	}

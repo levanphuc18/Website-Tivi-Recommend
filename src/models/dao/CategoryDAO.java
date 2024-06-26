@@ -28,6 +28,7 @@ public class CategoryDAO extends DAO {
 		Query query = session.createQuery(hql);
 		List<CategoryEntity> list = query.list();
 		Categories categories = new Categories(list);
+//		System.out.println(categories + "PHUC");
 		session.close();
 		return categories;
 	}

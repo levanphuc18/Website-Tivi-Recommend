@@ -36,8 +36,10 @@ import models.Generate;
 import models.Pagination;
 import models.UploadFile;
 import models.List.Categories;
+import models.List.Configs;
 import models.List.Products;
 import models.dao.CategoryDAO;
+import models.dao.ConfigDAO;
 import models.dao.ProductDAO;
 
 @Transactional
@@ -86,10 +88,13 @@ public class ProductController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String renderAddProductPage(ModelMap model) throws IOException {
+		ConfigDAO configDAO = new ConfigDAO(factory);
 		CategoryDAO categoryDAO = new CategoryDAO(factory);
 		Categories categories = categoryDAO.getCategories();
+		Configs configs = configDAO.getConfigs();
 
 		model.addAttribute("categories", categories.getList());
+		model.addAttribute("configs", configs.getList());
 		model.addAttribute("product", new ProductEntity());
 		model.addAttribute("title", "Thêm sản phẩm");
 		return viewsDirectory + "addProduct";
@@ -125,10 +130,21 @@ public class ProductController {
 			model.addAttribute("categoryValid", "is-invalid");
 			errorsCount++;
 		}
+		
+		if (product.getConfig().getId().isEmpty()) {
+			errors.rejectValue("config", "product", "Chọn cấu hình sản phẩm");
+			model.addAttribute("configValid", "is-invalid");
+			errorsCount++;
+		}
+		
+
+		ConfigDAO configDAO = new ConfigDAO(factory);
+		CategoryDAO categoryDAO = new CategoryDAO(factory);
 
 		if (errorsCount != 0) {
-			CategoryDAO categoryDAO = new CategoryDAO(factory);
-			model.addAttribute("categories", categoryDAO.getCategories().getList());
+//			model.addAttribute("configs", configDAO.getConfigs().getList());
+//			model.addAttribute("categories", categoryDAO.getCategories().getList());
+			
 			model.addAttribute("product", product);
 			model.addAttribute("message", "Vui lòng điền đầy đủ thông tin!");
 			model.addAttribute("messageType", "warning");
@@ -246,8 +262,11 @@ public class ProductController {
 		ProductEntity product = productDAO.getProduct(id);
 		CategoryDAO categoryDAO = new CategoryDAO(factory);
 		Categories categories = categoryDAO.getCategories();
+		ConfigDAO configDAO = new ConfigDAO(factory);
+		Configs configs = configDAO.getConfigs();
 
 		model.addAttribute("categories", categories.getList());
+		model.addAttribute("configs", configs.getList());
 		model.addAttribute("product", product);
 		model.addAttribute("title", "Chỉnh sửa sản phẩm");
 		return viewsDirectory + "editProduct";
