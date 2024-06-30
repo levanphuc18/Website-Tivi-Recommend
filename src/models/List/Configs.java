@@ -4,18 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entities.ConfigEntity;
+import entities.ProductEntity;
 
 public class Configs {
 	private List<ConfigEntity> list;
 
 	public Configs() {
 		// TODO Auto-generated constructor stub
-		list = new ArrayList<ConfigEntity>();
-	}
-
-	public Configs(List<ConfigEntity> configs) {
-		// TODO Auto-generated constructor stub
-		this.list = configs;
 	}
 
 	public List<ConfigEntity> getList() {
@@ -23,6 +18,11 @@ public class Configs {
 	}
 
 	public void setList(List<ConfigEntity> configs) {
+		this.list = configs;
+	}
+
+	public Configs(List<ConfigEntity> configs) {
+		super();
 		this.list = configs;
 	}
 }

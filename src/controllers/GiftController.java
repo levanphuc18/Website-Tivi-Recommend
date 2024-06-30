@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -29,15 +31,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import entities.CartDetailEntity;
+import entities.ConfigEntity;
 import entities.CustomerEntity;
 import entities.FavoriteProductEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
 import models.BcryptEncryption;
 import models.ChangePasswordModel;
+import models.ConfigFiltersDTO;
 import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
 import models.CustomerValidateModel;
@@ -182,6 +188,7 @@ public class GiftController {
 					method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
 		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+//		model.addAttribute("listcf", method.getAllConf());
 		
 		
 		return "store/index";
@@ -190,6 +197,8 @@ public class GiftController {
 	@RequestMapping("/product-detail/{productId}")
 	public String productDetail2(@PathVariable("productId") String productId, ModelMap model, HttpSession httpSession) {
 		Methods method = new Methods(factory);
+		ProductEntity productEntity = new ProductEntity();
+		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if (httpSession.getAttribute("listRecentViewProducts") != null) {
 			List<ProductEntity> lpe = (List<ProductEntity>) httpSession.getAttribute("listRecentViewProducts");
@@ -210,6 +219,10 @@ public class GiftController {
 		}
 		method.updateProductViews(productId, method.getProduct(productId).getViews() + 1);
 		model.addAttribute("product", method.getProduct(productId));
+		
+
+	    model.addAttribute("config", productEntity.getConfig()); // Đặt thông tin cấu hình vào model
+		
 		model.addAttribute("listFavorite", method.getListFavourite(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		System.out.println(productId + "; " + method.getProduct(productId).getName());
@@ -286,6 +299,9 @@ public class GiftController {
 
 		return "store/category-products";
 	}
+	
+	
+	
 
 	@RequestMapping(value = "/sign-in")
 	public String signIn(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
@@ -647,7 +663,7 @@ public class GiftController {
 	public String orderHistory(HttpSession httpSession, ModelMap model) {
 		Methods method = new Methods(factory);
 		httpSession.setAttribute("listCategory", method.getListCategory());
-		model.addAttribute("listOrder", method.getCustomerOrder(
+		model.addAttribute("listOrder", method.getCustomerByUsername(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		model.addAttribute("customerEntity",
 				method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
@@ -1526,4 +1542,37 @@ public class GiftController {
 //		return "redirect:/store/user-info/favorite";
 //	}
 
+
+
+	 @RequestMapping("/filter")
+	    public String filterProducts(ModelMap model,
+	    		@RequestParam(value = "nameCategory", required = false) String nameCategory,
+	            @RequestParam(value = "screenType", required = false) String screenType,
+	            @RequestParam(value = "screenSize", required = false) String screenSize,
+	            @RequestParam(value = "scanningFrequency", required = false) String scanningFrequency,
+	            @RequestParam(value = "resolution", required = false) String resolution,
+	            @RequestParam(value = "utilities", required = false) String utilities,
+	            @RequestParam(value = "operatingSystem", required = false) String operatingSystem,HttpServletRequest request,HttpSession httpSession
+	    ) {
+		 Methods methods  = new Methods(factory);
+	        List<ProductEntity> productList =methods.filterProducts(nameCategory ,screenType, screenSize, scanningFrequency, resolution, utilities, operatingSystem);
+	        
+	        System.out.println(productList.size()  + "PHUCCSCSCS");
+	        ModelAndView modelAndView = new ModelAndView("products");
+	        modelAndView.addObject("productsFilter", productList);
+	        
+
+	        PagedListHolder pagedListHolder = new PagedListHolder(methods.filterProducts(nameCategory, screenType, screenSize, scanningFrequency, resolution, utilities, operatingSystem));
+	        int page = ServletRequestUtils.getIntParameter(request, "p", 0);
+			pagedListHolder.setPage(page);
+			pagedListHolder.setMaxLinkedPages(3);
+			pagedListHolder.setPageSize(8);
+
+			model.addAttribute("listFavorite", methods.getListFavourite(
+					methods.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+			model.addAttribute("pagedListHolder", pagedListHolder);
+	        
+	        
+	        return "store/filter-products";
+	    }
 }

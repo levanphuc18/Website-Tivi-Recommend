@@ -49,7 +49,19 @@ public class MainController {
 		}
 		
 		// TOP 4 SP CÓ LƯỢT XEM NHIỀU NHẤT
+//		model.addAttribute("12332133", method.filterProducts("màn hình phẳng","46 inch","40HZ", "4K","Điều khiển thông minh","Smart TV"));
+//		model.addAttribute("12332133", method.filterProducts("45 inch"));
+		
+		model.addAttribute("listCategories", method.getUniqueCategories());
 		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+		model.addAttribute("listScreenTypes", method.getUniqueScreenTypes());
+		model.addAttribute("listScreenSizes", method.getUniqueScreenSizes());
+		model.addAttribute("listScanningFrequencies", method.getUniqueScanningFrequencies());
+		model.addAttribute("listResolutions", method.getUniqueResolutions());
+		model.addAttribute("listUtilities", method.getUniqueUtilities());
+		model.addAttribute("listOperatingSystems", method.getUniqueOperatingSystems());
+
+
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if(httpSession.getAttribute("customerUsername")!=null) {
 			int sum = 0;
@@ -60,6 +72,12 @@ public class MainController {
 			httpSession.setAttribute("customerTotalQuantity", sum);
 			model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
+		
+		
+		// Filter
+		
+		
+		
 		
 		// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 //		String listMHStr = getRecommendation("P5610");
@@ -102,6 +120,44 @@ public class MainController {
 		/* addProductsForTesting(); */
 		return "store/index";
 	}
+	
+	
+	// Filter
+//	 @Autowired
+//	    private ConfigService configService;
+//	 Methods method = new Methods(factory);
+//
+//	    @RequestMapping("/filters")
+//	    public String getFilters(Model model) {
+//	        ConfigFiltersDTO filters = configService.getUniqueColumnValues();
+//	        model.addAttribute("filters", filters);
+//	        return "filters";
+//	    }
+//
+//	    @PostMapping("/filterResults")
+//	    public String getFilterResults(@RequestParam("color") String color,
+//	                                   @RequestParam("screentype") String screentype,
+//	                                   @RequestParam("screensize") String screensize,
+//	                                   @RequestParam("scanningfrequency") String scanningfrequency,
+//	                                   @RequestParam("resolution") String resolution,
+//	                                   @RequestParam("utilities") String utilities,
+//	                                   @RequestParam("operatingsystem") String operatingsystem,
+//	                                   Model model) {
+//	        FilterCriteria criteria = new FilterCriteria();
+//	        criteria.setColor(color);
+//	        criteria.setScreentype(screentype);
+//	        criteria.setScreensize(screensize);
+//	        criteria.setScanningfrequency(scanningfrequency);
+//	        criteria.setResolution(resolution);
+//	        criteria.setUtilities(utilities);
+//	        criteria.setOperatingsystem(operatingsystem);
+//
+//	        List<ConfigEntity> filteredResults = configService.getFilteredConfigs(criteria);
+//	        model.addAttribute("filteredResults", filteredResults);
+//	        return "filterResults"; // Tên view hiển thị kết quả lọc
+//	    }
+	
+	
 //	public String getRecommendation(String maMH) {
 //		String s = null;
 //		String str = null;
@@ -143,4 +199,5 @@ public class MainController {
 	
 
 
+	
 }

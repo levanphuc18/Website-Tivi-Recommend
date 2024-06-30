@@ -174,10 +174,28 @@
     .product-detail__img-container{
         max-width: 100%;
         margin-bottom: 20px;
+        
     }
+ 
     .detail__wrapper{
         flex-direction: column;
     }
+    
+    .scroll-frame {
+            max-height: 400px; /* Chiều cao tối đa của khung cuộn */
+            overflow-y: auto; /* Thêm thanh cuộn dọc */
+            padding: 10px;
+            border: 1px solid #ccc; /* Đường viền của khung cuộn */
+            margin-top: 20px; /* Khoảng cách phía trên của khung cuộn */
+        }
+        
+
+.description-box {
+    border: 1px solid #ccc; /* Đường viền khung */
+    border-radius: 8px; /* Bo tròn góc */
+    padding: 12px; /* Khoảng cách lề bên trong */
+}
+    
     .visited-product .item{
         width: 25%;
     }
@@ -305,3 +323,68 @@
         width: 100%;
     }
 }
+
+
+
+.filter-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.filter-sidebar {
+    width: 100%;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Giảm khoảng cách giữa các phần tử */
+}
+
+.filter-item {
+    flex: 1 1 150px; /* Giảm kích thước tối thiểu của các phần tử */
+    min-width: 150px; /* Giảm kích thước tối thiểu của các phần tử */
+    padding: 8px; /* Giảm padding để các phần tử nhỏ gọn hơn */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-select, .filter-input {
+    width: 100%;
+    padding: 8px; /* Giảm padding để các phần tử nhỏ gọn hơn */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    font-size: 0.9rem; /* Giảm kích thước chữ của input và select */
+}
+
+.filter-select:focus, .filter-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.filter-button {
+    padding: 8px 16px; /* Giảm padding để nút nhỏ gọn hơn */
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem; /* Giảm kích thước chữ của nút */
+}
+
+.filter-button:hover {
+    background-color: #0056b3;
+}
+
+

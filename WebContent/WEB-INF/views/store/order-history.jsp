@@ -95,44 +95,7 @@
 									lại trang chủ</a> để mua sắm.
 							</p>
 						</c:if>
-						<%-- <table class="cart-list__table mb-4">
-							<thead>
-								<tr class="card-list__table-header font-bold">
-									<th>Tên</th>
-									<th>Số lượng</th>
-									<th>Thành tiền</th>
-								</tr>
-							</thead>
-							<c:forEach var="order" items="${listOrder}" varStatus="loop">
-								<p class="">${loop.index+1}.</p>
-								<tbody>
-									<c:forEach var="c" items="${order.orderDetails}">
-										<tr class="card-list__table-item">
-											<td class="card-list__table-desc"
-												style="text-align: left !important;"><a
-												href="${applicationScope.productDetailPage}/${c.product.id}"
-												class="hover:text-indigo-500">${c.product.name}</a> <br>
-												<div class="cart-list__price">
-													Đơn giá: <span class="font-bold"><fmt:setLocale
-															value="vi_VN" scope="session" /> <fmt:formatNumber
-															value="${c.product.price}" type="currency" /></span>
-												</div></td>
-											<td class="cart-list__quantity">${c.quantity}</td>
-											<td class="card-list__total font-bold"><fmt:setLocale
-													value="vi_VN" scope="session" /> <fmt:formatNumber
-													value="${c.quantity*c.product.price}" type="currency" /></td>
-										</tr>
-									</c:forEach>
-								</tbody>
-
-								<div class="w-full flex justify-between border-t my-1 py-2">
-									<span class="">Tổng cộng</span> <span class="font-bold"><fmt:setLocale
-											value="vi_VN" scope="session" /> <fmt:formatNumber
-											value="${order.orderTotal}" type="currency" /></span>
-								</div>
-								<div class="w-full border-b border-black"></div>
-							</c:forEach>
-						</table> --%>
+						
 						<div class="order-row flex justify-between">
 							<div class="order-cell flex-1 p-2 border font-bold">Sản
 								phẩm</div>
