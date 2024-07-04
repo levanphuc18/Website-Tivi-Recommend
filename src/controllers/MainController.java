@@ -50,6 +50,16 @@ public class MainController {
 		
 		// TOP 4 SP CÓ LƯỢT XEM NHIỀU NHẤT
 		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+		
+		model.addAttribute("listCategories", method.getUniqueCategories());
+		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+		model.addAttribute("listScreenTypes", method.getUniqueScreenTypes());
+		model.addAttribute("listScreenSizes", method.getUniqueScreenSizes());
+		model.addAttribute("listScanningFrequencies", method.getUniqueScanningFrequencies());
+		model.addAttribute("listResolutions", method.getUniqueResolutions());
+		model.addAttribute("listUtilities", method.getUniqueUtilities());
+		model.addAttribute("listOperatingSystems", method.getUniqueOperatingSystems());
+		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if(httpSession.getAttribute("customerUsername")!=null) {
 			int sum = 0;

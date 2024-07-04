@@ -13,16 +13,17 @@ public class Configs {
 		list = new ArrayList<ConfigEntity>();
 	}
 
-	public Configs(List<ConfigEntity> configs) {
-		// TODO Auto-generated constructor stub
-		this.list = configs;
-	}
 
 	public List<ConfigEntity> getList() {
 		return list;
 	}
 
 	public void setList(List<ConfigEntity> configs) {
+		this.list = configs;
+	}
+	
+	public Configs(List<ConfigEntity> configs) {
+		super();
 		this.list = configs;
 	}
 }

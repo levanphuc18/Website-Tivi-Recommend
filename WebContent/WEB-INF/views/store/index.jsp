@@ -52,6 +52,87 @@
 			</div>
 		</div>
 
+<!-- Bộ lọc sản phẩm -->
+		<div class="filter-container">
+			<aside class="filter-sidebar">
+				<form action="store/filter" method="get" class="filter-form">
+
+				<!-- Category -->
+
+					<!-- Screen Type -->
+					<div class="filter-item">
+						<select name="nameCategory" class="filter-select">
+							<option value="">Hãng</option>
+							<c:forEach var="p" items="${listCategories}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Screen Type -->
+					<div class="filter-item">
+						<select name="screenType" class="filter-select">
+							<option value="">Màn hình</option>
+							<c:forEach var="p" items="${listScreenTypes}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Screen Size -->
+					<div class="filter-item">
+						<select name="screenSize" class="filter-select">
+							<option value="">Kích thước</option>
+							<c:forEach var="p" items="${listScreenSizes}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Scanning Frequency -->
+					<div class="filter-item">
+						<select name="scanningFrequency" class="filter-select">
+							<option value="">Tần số quét</option>
+							<c:forEach var="p" items="${listScanningFrequencies}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Resolution -->
+					<div class="filter-item">
+						<select name="resolution" class="filter-select">
+							<option value="">Độ phân giải</option>
+							<c:forEach var="p" items="${listResolutions}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Utilities -->
+					<div class="filter-item">
+						<select name="utilities" class="filter-select">
+							<option value="">Tiện ích</option>
+							<c:forEach var="p" items="${listUtilities}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<!-- Operating System -->
+					<div class="filter-item">
+						<select name="operatingSystem" class="filter-select">
+							<option value="">Hệ điều hành</option>
+							<c:forEach var="p" items="${listOperatingSystems}">
+								<option value="${p}">${p}</option>
+							</c:forEach>
+						</select>
+					</div>
+
+					<button type="submit" class="filter-button">Áp dụng bộ lọc</button>
+				</form>
+			</aside>
+		</div>
 
 
 

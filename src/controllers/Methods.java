@@ -146,6 +146,7 @@ public class Methods {
 		List<OrderEntity> list = query.list();
 		return list;
 	}
+	
 
 	public List<ProductEntity> getAllProducts() {
 		/* System.out.println("getListCartDetail"); */
@@ -508,5 +509,131 @@ public class Methods {
 		return query.executeUpdate() > 0;
 	}
 
-	
+	// Phương thức lấy danh sách các giá trị duy nhất của cột screenTypes từ bảng ConfigEntity
+		public List<String> getUniqueCategories() {
+//	        System.out.println("getUnique");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.name FROM CategoryEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueCategories = query.list();
+	        return uniqueCategories;
+	    }
+
+
+	    public List<String> getUniqueScreenTypes() {
+//	        System.out.println("getUniqueScreenTypes");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.screentype FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueScreenTypes = query.list();
+	        return uniqueScreenTypes;
+	    }
+
+		public List<String> getUniqueScreenSizes() {
+//	        System.out.println("getUniqueScreenSizes + dnsajldhkashdashk");
+	        Session session = factory.getCurrentSession();
+//	        session.beginTransaction();
+	        String hql = "SELECT DISTINCT c.screensize FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueScreenSizes = query.list();
+//	        session.getTransaction().commit();
+	        return uniqueScreenSizes;
+	    }
+
+
+	    public List<String> getUniqueScanningFrequencies() {
+//	        System.out.println("getUniqueScanningFrequencies");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.scanningfrequency FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueScanningFrequencies = query.list();
+	        return uniqueScanningFrequencies;
+	    }
+
+	    public List<String> getUniqueResolutions() {
+//	        System.out.println("getUniqueResolutions");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.resolution FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueResolutions = query.list();
+	        return uniqueResolutions;
+	    }
+
+	    public List<String> getUniqueUtilities() {
+//	        System.out.println("getUniqueUtilities");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.utilities FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueUtilities = query.list();
+	        return uniqueUtilities;
+	    }
+
+	    public List<String> getUniqueOperatingSystems() {
+//	        System.out.println("getUniqueOperatingSystems");
+	        Session session = factory.getCurrentSession();
+	        String hql = "SELECT DISTINCT c.operatingsystem FROM ConfigEntity c";
+	        Query query = session.createQuery(hql);
+	        List<String> uniqueOperatingSystems = query.list();
+	        return uniqueOperatingSystems;
+	    }
+	    
+	 // Filter
+	    public List<ProductEntity> filterProducts(String nameCategory, String screenType, String screenSize, String scanningFrequency,
+	            String resolution, String utilities, String operatingSystem) {
+	        Session session = factory.getCurrentSession();
+	        StringBuilder hql = new StringBuilder("SELECT DISTINCT p FROM ProductEntity p " +
+	                                               "JOIN FETCH p.category cat " +
+	                                               "JOIN FETCH p.config cfg " +
+	                                               "WHERE 1=1");
+
+	        if (nameCategory != null && !nameCategory.isEmpty()) {
+	            hql.append(" AND cat.name = :nameCategory");
+	        }
+	        if (screenType != null && !screenType.isEmpty()) {
+	            hql.append(" AND cfg.screentype = :screenType");
+	        }
+	        if (screenSize != null && !screenSize.isEmpty()) {
+	            hql.append(" AND cfg.screensize = :screenSize");
+	        }
+	        if (scanningFrequency != null && !scanningFrequency.isEmpty()) {
+	            hql.append(" AND cfg.scanningfrequency = :scanningFrequency");
+	        }
+	        if (resolution != null && !resolution.isEmpty()) {
+	            hql.append(" AND cfg.resolution = :resolution");
+	        }
+	        if (utilities != null && !utilities.isEmpty()) {
+	            hql.append(" AND cfg.utilities = :utilities");
+	        }
+	        if (operatingSystem != null && !operatingSystem.isEmpty()) {
+	            hql.append(" AND cfg.operatingsystem = :operatingSystem");
+	        }
+
+	        Query query = session.createQuery(hql.toString());
+
+	        if (nameCategory != null && !nameCategory.isEmpty()) {
+	            query.setParameter("nameCategory", nameCategory);
+	        }
+	        if (screenType != null && !screenType.isEmpty()) {
+	            query.setParameter("screenType", screenType);
+	        }
+	        if (screenSize != null && !screenSize.isEmpty()) {
+	            query.setParameter("screenSize", screenSize);
+	        }
+	        if (scanningFrequency != null && !scanningFrequency.isEmpty()) {
+	            query.setParameter("scanningFrequency", scanningFrequency);
+	        }
+	        if (resolution != null && !resolution.isEmpty()) {
+	            query.setParameter("resolution", resolution);
+	        }
+	        if (utilities != null && !utilities.isEmpty()) {
+	            query.setParameter("utilities", utilities);
+	        }
+	        if (operatingSystem != null && !operatingSystem.isEmpty()) {
+	            query.setParameter("operatingSystem", operatingSystem);
+	        }
+
+	        List<ProductEntity> productList = query.list();
+	        System.out.println(productList.size() + " PhucFilter \n");
+	        return productList;
+	    }
 }
