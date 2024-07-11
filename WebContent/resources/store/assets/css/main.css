@@ -324,3 +324,42 @@ tbody::before {
 	height: 600px;
 	overflow-y: scroll;
 }
+
+
+/* Rating */
+
+.list-inline {
+  list-style: none; /* Loại bỏ dấu chấm mặc định của danh sách */
+  padding: 0;
+  margin: 0;
+}
+
+.list-inline li {
+  display: inline-block; /* Hiển thị các mục theo hàng ngang */
+  margin-right: 5px; /* Khoảng cách giữa các mục */
+}
+
+.rating-selected {
+  color: gold; /* Màu vàng cho ngôi sao được chọn */
+}
+
+.rating {
+  color: gray; /* Màu xám cho ngôi sao chưa được chọn */
+}
+
+
+/*Rating*/
+.product-ratings li {
+	padding: 0;
+}
+
+.product-ratings li .rating {
+	color: #8bdccd;
+	font-size: 14px;
+}
+
+.product-ratings li .rating-selected {
+	color: gold;
+	font-size: 14px;
+}
+

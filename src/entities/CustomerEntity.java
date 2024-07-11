@@ -1,5 +1,6 @@
 package entities;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import models.Md5Encryption;
 
 @Entity
 @Table(name = "Customer")
@@ -70,6 +73,13 @@ public class CustomerEntity {
 	public String getPassword() {
 		return password;
 	}
+	
+//	public String getPassword() throws NoSuchAlgorithmException {
+//		Md5Encryption encryption= new Md5Encryption();
+//		password = encryption.convertHashToString(password);
+//		
+//		return password;
+//	}
 
 	public void setPassword(String password) {
 		this.password = password;

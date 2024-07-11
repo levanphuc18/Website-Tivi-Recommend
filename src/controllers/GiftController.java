@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import entities.CartDetailEntity;
@@ -35,11 +38,13 @@ import entities.CustomerEntity;
 import entities.FavoriteProductEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
+import models.BcryptEncryption;
 import models.ChangePasswordModel;
 import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
 import models.CustomerValidateModel;
 import models.Mailer;
+import models.Md5Encryption;
 import models.OrderModel;
 
 @Transactional
@@ -51,78 +56,81 @@ public class GiftController {
 	@Autowired
 	Mailer mailer;
 	
-	
-	// LƯU ĐÁNH GIÁ 
-		public String saveRatingRecord(String red) {
-			String s = null;
-			String str = null;
-			try {
-
-				// run the Unix "ps -ef" command
-				// using the Runtime exec method:
-				String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\add-to-csv.py " + red;
-				Process p = Runtime.getRuntime().exec(cmd);
-
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-				// read the output from the command
-				System.out.println("Here is the standard output of the command:\n");
-				while ((s = stdInput.readLine()) != null) {
-					System.out.println(s);
-
-					str = s;
-				}
-
-			} catch (IOException e) {
-				System.out.println("exception happened - here's what I know: ");
-				e.printStackTrace();
-				// System.exit(-1);
-			}
-			return str;
-
-		}
+	// thực tập mã hóa Bcrypt
+	BcryptEncryption encryption = new BcryptEncryption();
 	
 	
-	// RECOMMENDDDDDDDDDDDDDDDDĐ
-	public String getRecommendation(String maMH) {
-		String s = null;
-		String str = null;
-		try {
-
-			// run the Unix "ps -ef" command
-			// using the Runtime exec method:
-			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
-			Process p = Runtime.getRuntime().exec(cmd);
-
-			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-			// read the output from the command
-			System.out.println("Here is the standard output of the command:\n");
-			while ((s = stdInput.readLine()) != null) {
-				System.out.println(s+"PHUC");
-
-				str = s;
-			}
-
-			// read any errors from the attempted command
-			System.out.println("Here is the standard error of the command (if any):\n");
-			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
-			}
-
-			// System.exit(0);
-		} catch (IOException e) {
-			System.out.println("exception happened - here's what I know: ");
-			e.printStackTrace();
-			// System.exit(-1);
-		}
-		return str;
-
-	}
+//	// LƯU ĐÁNH GIÁ 
+//		public String saveRatingRecord(String red) {
+//			String s = null;
+//			String str = null;
+//			try {
+//
+//				// run the Unix "ps -ef" command
+//				// using the Runtime exec method:
+//				String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\add-to-csv.py " + red;
+//				Process p = Runtime.getRuntime().exec(cmd);
+//
+//				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//
+//				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//
+//				// read the output from the command
+//				System.out.println("Here is the standard output of the command:\n");
+//				while ((s = stdInput.readLine()) != null) {
+//					System.out.println(s);
+//
+//					str = s;
+//				}
+//
+//			} catch (IOException e) {
+//				System.out.println("exception happened - here's what I know: ");
+//				e.printStackTrace();
+//				// System.exit(-1);
+//			}
+//			return str;
+//
+//		}
+//	
+//	
+//	// RECOMMENDDDDDDDDDDDDDDDDĐ
+//	public String getRecommendation(String maMH) {
+//		String s = null;
+//		String str = null;
+//		try {
+//
+//			// run the Unix "ps -ef" command
+//			// using the Runtime exec method:
+//			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
+//			Process p = Runtime.getRuntime().exec(cmd);
+//
+//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//
+//			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//
+//			// read the output from the command
+//			System.out.println("Here is the standard output of the command:\n");
+//			while ((s = stdInput.readLine()) != null) {
+//				System.out.println(s+"PHUC");
+//
+//				str = s;
+//			}
+//
+//			// read any errors from the attempted command
+//			System.out.println("Here is the standard error of the command (if any):\n");
+//			while ((s = stdError.readLine()) != null) {
+//				System.out.println(s);
+//			}
+//
+//			// System.exit(0);
+//		} catch (IOException e) {
+//			System.out.println("exception happened - here's what I know: ");
+//			e.printStackTrace();
+//			// System.exit(-1);
+//		}
+//		return str;
+//
+//	}
 
 	@RequestMapping("")
 	public String store(ModelMap model, HttpSession httpSession) {
@@ -183,6 +191,7 @@ public class GiftController {
 
 	@RequestMapping("/product-detail/{productId}")
 	public String productDetail2(@PathVariable("productId") String productId, ModelMap model, HttpSession httpSession) {
+		ProductEntity productEntity = new ProductEntity();
 		Methods method = new Methods(factory);
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if (httpSession.getAttribute("listRecentViewProducts") != null) {
@@ -204,6 +213,8 @@ public class GiftController {
 		}
 		method.updateProductViews(productId, method.getProduct(productId).getViews() + 1);
 		model.addAttribute("product", method.getProduct(productId));
+		model.addAttribute("config", productEntity.getConfig()); // Đặt thông tin cấu hình vào model
+		
 		model.addAttribute("listFavorite", method.getListFavourite(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		System.out.println(productId + "; " + method.getProduct(productId).getName());
@@ -211,41 +222,41 @@ public class GiftController {
 		
 		
 		
-		// ĐỀ XUẤT
-		String listMHStr = getRecommendation(productId);
-		String tmp = listMHStr.replace("'", "");
-		tmp = tmp.replace("[", "");
-		tmp = tmp.replace("]", "");
-		tmp = tmp.replace(" ", "");
-		
-		System.out.print(tmp);
-		String[] tmp2= tmp.split(",");
-		
-		List<ProductEntity> listProductDeXuat = new ArrayList<>();
-		for(String s:tmp2) {
-			
-			ProductEntity prdtmp= method.getProduct(s);
-			if (prdtmp != null) {
-		        listProductDeXuat.add(prdtmp);
-		        System.out.println("\nCác sản phẩm được đề xuất: " + prdtmp.getId() + "\n");
-		    } else {
-		        System.out.println("\nSản phẩm với ID " + s + " không tồn tại.\n");
-		    }
-//			System.out.println("\n Các sản phẩm được đề xuất: "+ prdtmp.getId()+"\n");
-		}
-
-
-		model.addAttribute("listDXSP", listProductDeXuat);
-		httpSession.setAttribute("listCategory", method.getListCategory());
-		if(httpSession.getAttribute("customerUsername")!=null) {
-			int sum = 0;
-		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
-			sum = sum + c.getQuantity();
-		}
-		System.out.println(sum);
-		httpSession.setAttribute("customerTotalQuantity", sum);
-		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
-}
+//		// ĐỀ XUẤT
+//		String listMHStr = getRecommendation(productId);
+//		String tmp = listMHStr.replace("'", "");
+//		tmp = tmp.replace("[", "");
+//		tmp = tmp.replace("]", "");
+//		tmp = tmp.replace(" ", "");
+//		
+//		System.out.print(tmp);
+//		String[] tmp2= tmp.split(",");
+//		
+//		List<ProductEntity> listProductDeXuat = new ArrayList<>();
+//		for(String s:tmp2) {
+//			
+//			ProductEntity prdtmp= method.getProduct(s);
+//			if (prdtmp != null) {
+//		        listProductDeXuat.add(prdtmp);
+//		        System.out.println("\nCác sản phẩm được đề xuất: " + prdtmp.getId() + "\n");
+//		    } else {
+//		        System.out.println("\nSản phẩm với ID " + s + " không tồn tại.\n");
+//		    }
+////			System.out.println("\n Các sản phẩm được đề xuất: "+ prdtmp.getId()+"\n");
+//		}
+//
+//
+//		model.addAttribute("listDXSP", listProductDeXuat);
+//		httpSession.setAttribute("listCategory", method.getListCategory());
+//		if(httpSession.getAttribute("customerUsername")!=null) {
+//			int sum = 0;
+//		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
+//			sum = sum + c.getQuantity();
+//		}
+//		System.out.println(sum);
+//		httpSession.setAttribute("customerTotalQuantity", sum);
+//		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+//}
 	
 //		model.addAttribute("listDXSP", listProductDeXuat);
 //		httpSession.setAttribute("listCategory", method.getListCategory());
@@ -388,12 +399,23 @@ public class GiftController {
 
 	@RequestMapping(value = "/sign-in", method = RequestMethod.POST)
 	public String signIn(@ModelAttribute("account") CustomerLoginAccountModel account, ModelMap model,
-			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) {
+			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
 		Methods method = new Methods(factory);
+		
+		// thực tập md5
+//		Md5Encryption encryption = new Md5Encryption();
+//		String password = encryption.convertHashToString(account.getPassword());
+		
+		// thực tập Bcrypt
+		BcryptEncryption encryption = new BcryptEncryption();
+		
+		String password = account.getPassword();
+		String storedHash = method.getPasswordOfCustomerWithUsername(account.getUsername());
+		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if (!method.isCustomerWithUsernameExit(account.getUsername())) {
 			errors.rejectValue("username", "account", "Tên đăng nhập không tồn tại!");
-		} else if (!account.getPassword().equals(method.getPasswordOfCustomerWithUsername(account.getUsername()))) {
+		} else if (!encryption.verifyPassword(password, storedHash)) {
 			errors.rejectValue("password", "account", "Mật khẩu không đúng!");
 		}
 		if (errors.hasErrors()) {
@@ -428,9 +450,16 @@ public class GiftController {
 
 	@RequestMapping(value = "/sign-up", method = RequestMethod.POST)
 	public String signUp(ModelMap model, @ModelAttribute("customer") CustomerValidateModel customer,
-			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) {
+			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
 		Methods method = new Methods(factory);
 		httpSession.setAttribute("listCategory", method.getListCategory());
+		
+		// thực tập md5
+//		Md5Encryption encryption = new Md5Encryption();
+		
+		// mã hóa Bcrypt
+		String passwword = encryption.hashPassword(customer.getPassword());
+
 		if (customer.getUsername().trim().length() == 0) {
 			errors.rejectValue("username", "customer", "Vui lòng nhập tên đăng nhập!");
 		} else if (customer.getUsername().trim().length() < 4) {
@@ -488,7 +517,8 @@ public class GiftController {
 			CustomerEntity ce = new CustomerEntity();
 			ce.setId(method.createTheNextCustomerId().trim());
 			ce.setUsername(customer.getUsername().trim());
-			ce.setPassword(customer.getPassword().trim());
+//			ce.setPassword(customer.getPassword().trim());
+			ce.setPassword(passwword);
 			ce.setFirstname(customer.getFirstName().trim());
 			ce.setLastname(customer.getLastName().trim());
 			ce.setPhone(customer.getTelephone().trim());
@@ -629,24 +659,37 @@ public class GiftController {
 		return "store/order-history";
 	}
 
+	
+	// thực tập md5
+	// thực tập Bcrypt
+//	encryption.verifyPassword(password, storedHash
 	@RequestMapping(value = "/user-info/change-password", method = RequestMethod.POST)
 	public String changePassword2(ModelMap model, @ModelAttribute("customer") ChangePasswordModel customer,
-			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) {
+			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
 		Methods method = new Methods(factory);
 		httpSession.setAttribute("listCategory", method.getListCategory());
-		if (customer.getOldPassword().trim().length() == 0) {
+		
+//		Md5Encryption encryption = new Md5Encryption();
+		
+		String oldPassword = customer.getOldPassword();
+		String newPassword = customer.getNewPassword();
+		String confirmNewPassword = customer.getConfirmNewPassword();
+		
+		String password = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getPassword().trim();
+		
+		
+		if (oldPassword.trim().length() == 0) {
 			errors.rejectValue("oldPassword", "customer", "Vui lòng nhập mật khẩu cũ!");
-		} else if (!customer.getOldPassword().trim().equals(method
-				.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getPassword().trim())) {
+		} else if (!encryption.verifyPassword(oldPassword, password)) {
 			errors.rejectValue("oldPassword", "customer", "Mật khẩu cũ không đúng!");
 		}
-		if (customer.getNewPassword().trim().length() == 0) {
+		if (newPassword.trim().length() == 0) {
 			errors.rejectValue("newPassword", "customer", "Vui lòng nhập mật khẩu mới!");
-		} else if (customer.getOldPassword().trim().equals(customer.getNewPassword().trim())) {
+		} else if (encryption.verifyPassword(newPassword, password)) {
 			errors.rejectValue("newPassword", "customer", "Mật khẩu mới không được trùng với mật khẩu cũ!");
 		}
 		if (!customer.getConfirmNewPassword().trim().equals(customer.getNewPassword().trim())
-				|| customer.getConfirmNewPassword().trim().length() == 0) {
+				|| confirmNewPassword.trim().length() == 0) {
 			errors.rejectValue("confirmNewPassword", "customer", "Xác nhận mật khẩu không khớp!");
 		}
 
@@ -658,7 +701,8 @@ public class GiftController {
 			return "store/user-change-password";
 		} else {
 			CustomerEntity ce = new CustomerEntity();
-			ce.setPassword(customer.getConfirmNewPassword());
+			String passwordHash = encryption.hashPassword(customer.getConfirmNewPassword());
+			ce.setPassword(passwordHash);
 //			model.addAttribute("message", "Chúc mừng, bạn đã nhập đúng!");
 			if (method.updateCustomerPassword(ce, httpSession)) {
 				System.out.println("Cập nhật mật khẩu thành công");
@@ -1092,7 +1136,8 @@ public class GiftController {
 				CustomerEntity customer = fp.getCustomer();
 				
 				String list = customer.getId() + "," + productId + "," + fp.getRating()  ;
-				String tmp = saveRatingRecord(list);
+//				String tmp = saveRatingRecord(list);
+				String tmp = "";
 				
 				// luu vao database cho nay
 
@@ -1486,4 +1531,36 @@ public class GiftController {
 //		return "redirect:/store/user-info/favorite";
 //	}
 
+	@RequestMapping("/filter")
+    public String filterProducts(ModelMap model,
+    		@RequestParam(value = "nameCategory", required = false) String nameCategory,
+            @RequestParam(value = "screenType", required = false) String screenType,
+            @RequestParam(value = "screenSize", required = false) String screenSize,
+            @RequestParam(value = "scanningFrequency", required = false) String scanningFrequency,
+            @RequestParam(value = "resolution", required = false) String resolution,
+            @RequestParam(value = "utilities", required = false) String utilities,
+            @RequestParam(value = "operatingSystem", required = false) String operatingSystem,HttpServletRequest request,HttpSession httpSession
+    ) {
+	 Methods methods  = new Methods(factory);
+        List<ProductEntity> productList =methods.filterProducts(nameCategory ,screenType, screenSize, scanningFrequency, resolution, utilities, operatingSystem);
+
+        System.out.println(productList.size()  + "PHUCCSCSCS");
+        ModelAndView modelAndView = new ModelAndView("products");
+        modelAndView.addObject("productsFilter", productList);
+
+
+        PagedListHolder pagedListHolder = new PagedListHolder(methods.filterProducts(nameCategory, screenType, screenSize, scanningFrequency, resolution, utilities, operatingSystem));
+        int page = ServletRequestUtils.getIntParameter(request, "p", 0);
+		pagedListHolder.setPage(page);
+		pagedListHolder.setMaxLinkedPages(3);
+		pagedListHolder.setPageSize(8);
+
+		model.addAttribute("listFavorite", methods.getListFavourite(
+				methods.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+		model.addAttribute("pagedListHolder", pagedListHolder);
+
+
+        return "store/filter-products";
+    }
+	
 }

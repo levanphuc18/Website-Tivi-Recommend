@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
  <head>
+ 
   <!-- ========== Meta Tags ========= -->
   <%@include file="/WEB-INF/views/admin/includes/header/head.jsp"%>
   <!-- ========== Favicon linkup ========= -->
@@ -79,6 +80,17 @@
            </form:select>
            <form:errors path="category" class="invalid-feedback" />
           </div>
+                    
+           <!-- thực tập -->
+          <div class="mb-4">
+           <label class="my-1 me-2" for="config">Loại cấu hình</label>
+           <form:select path="config.id" class="form-select ${configValid }" id="config" aria-describedby="cofigHelp">
+            <form:option value="">Chọn cấu hình của sản phẩm</form:option>
+            <form:options items="${configs}" itemLabel="name" itemValue="id" />
+           </form:select>
+           <form:errors path="config" class="invalid-feedback" />
+          </div>
+         
 
           <div class="mb-4">
            <label for="textarea">Mô tả</label>
