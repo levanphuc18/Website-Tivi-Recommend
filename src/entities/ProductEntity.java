@@ -156,6 +156,7 @@ public class ProductEntity {
 	public ConfigEntity getConfig() {
 		return config;
 	}
+	
 
 	public void setConfig(ConfigEntity config) {
 		this.config = config;
