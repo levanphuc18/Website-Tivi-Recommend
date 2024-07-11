@@ -53,6 +53,7 @@ public class CustomerEntity {
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<FavoriteProductEntity> favoriteProducts;
+	
 
 	public String getId() {
 		return id;

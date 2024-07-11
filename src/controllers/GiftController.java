@@ -44,7 +44,7 @@ import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
 import models.CustomerValidateModel;
 import models.Mailer;
-import models.Md5Encryption;
+
 import models.OrderModel;
 
 @Transactional

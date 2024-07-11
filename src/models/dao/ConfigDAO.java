@@ -1,7 +1,6 @@
 package models.dao;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -11,12 +10,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import entities.CategoryEntity;
 import entities.ConfigEntity;
-import models.BcryptEncryption;
-import models.List.Categories;
 import models.List.Configs;
-import net.sf.ehcache.hibernate.HibernateUtil;
 
 @Transactional
 public class ConfigDAO extends DAO {

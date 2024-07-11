@@ -22,7 +22,7 @@ import entities.FavoriteProductEntity;
 import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
-import models.Md5Encryption;
+
 
 public class Methods {
 	
