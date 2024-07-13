@@ -38,6 +38,7 @@ import entities.CustomerEntity;
 import entities.FavoriteProductEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
+import entities.RatingProductEntity;
 import models.BcryptEncryption;
 import models.ChangePasswordModel;
 import models.CustomerForgotPasswordModel;
@@ -46,6 +47,7 @@ import models.CustomerValidateModel;
 import models.Mailer;
 
 import models.OrderModel;
+import models.RatingModel;
 
 @Transactional
 @Controller
@@ -543,6 +545,9 @@ public class GiftController {
 			}
 		}
 	}
+	
+	
+	
 
 	
 
@@ -656,7 +661,52 @@ public class GiftController {
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		model.addAttribute("customerEntity",
 				method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+		System.out.println("order-history");
 		return "store/order-history";
+	}
+
+	
+	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
+	public String submitRating(@RequestParam("orderId") String orderId,
+								@RequestParam("customerId") String customerId,
+	                           @RequestParam("productId") String productId,
+	                           @RequestParam("rating") int rating,
+	                           ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
+	    
+	    Methods method = new Methods(factory);
+	    try {
+	        // Lấy thông tin customer từ session và orderId, productId từ request
+	        CustomerEntity customer = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername"));
+	        
+	     // Tạo một đối tượng RatingProductEntity từ dữ liệu nhận được
+	        RatingProductEntity ratingEntity = new RatingProductEntity();
+	        ratingEntity.setOrderId(orderId);    // Thiết lập orderId
+	        ratingEntity.setCustomer(customer);  // Thiết lập khách hàng
+	        ratingEntity.setProductId(productId);  // Thiết lập productId
+	        ratingEntity.setRating(rating);      // Thiết lập rating
+
+
+	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
+	        if (method.insertRating(ratingEntity)) {
+	        	
+	        	// Trong phương thức submitRating của controller
+	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
+	        	model.addAttribute("listOrder", listOrder);
+
+	        	
+	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
+	            httpSession.setAttribute("customerUsername", customer.getUsername());
+	            System.out.println("order-history- Rating success");
+	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
+	        } else {
+	            model.addAttribute("message", "Đánh giá thất bại!");
+	            System.out.println("order-history- Rating fail");
+	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
+	        }
+	    } catch (Exception e) {
+	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
+	        return "store/order-history"; // Xử lý ngoại lệ nếu có
+	    }
 	}
 
 	
@@ -1562,5 +1612,28 @@ public class GiftController {
 
         return "store/filter-products";
     }
+	
+//	@RequestMapping(value = "/submit-rating", method = RequestMethod.POST)
+//	public String submitRating(@RequestParam("customerId") String customerId, 
+//	                           @RequestParam("orderId") String orderId,
+//	                           @RequestParam("productId") String productId,
+//	                           @RequestParam("rating") int rating) {
+//	    try {
+//	        Methods.saveRating(customerId, orderId, productId, rating);
+//	        return "Đã gửi đánh giá thành công.";
+//	    } catch (Exception e) {
+//	        return "Lỗi khi gửi đánh giá: " + e.getMessage();
+//	    }
+//	}
+
+//    @RequestMapping(value = "/user-info/rating-history")
+//    public String ratingHistory(HttpSession httpSession, ModelMap model) {
+//        Methods method = new Methods(factory);
+//        httpSession.setAttribute("listCategory", method.getListCategory());
+//        String customerId = method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"));
+//        model.addAttribute("listRatings", method.getCustomerRatings(customerId));
+//        model.addAttribute("customerEntity", method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+//        return "store/rating-history";
+//    }
 	
 }

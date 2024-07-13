@@ -95,44 +95,7 @@
 									lại trang chủ</a> để mua sắm.
 							</p>
 						</c:if>
-						<%-- <table class="cart-list__table mb-4">
-							<thead>
-								<tr class="card-list__table-header font-bold">
-									<th>Tên</th>
-									<th>Số lượng</th>
-									<th>Thành tiền</th>
-								</tr>
-							</thead>
-							<c:forEach var="order" items="${listOrder}" varStatus="loop">
-								<p class="">${loop.index+1}.</p>
-								<tbody>
-									<c:forEach var="c" items="${order.orderDetails}">
-										<tr class="card-list__table-item">
-											<td class="card-list__table-desc"
-												style="text-align: left !important;"><a
-												href="${applicationScope.productDetailPage}/${c.product.id}"
-												class="hover:text-indigo-500">${c.product.name}</a> <br>
-												<div class="cart-list__price">
-													Đơn giá: <span class="font-bold"><fmt:setLocale
-															value="vi_VN" scope="session" /> <fmt:formatNumber
-															value="${c.product.price}" type="currency" /></span>
-												</div></td>
-											<td class="cart-list__quantity">${c.quantity}</td>
-											<td class="card-list__total font-bold"><fmt:setLocale
-													value="vi_VN" scope="session" /> <fmt:formatNumber
-													value="${c.quantity*c.product.price}" type="currency" /></td>
-										</tr>
-									</c:forEach>
-								</tbody>
 
-								<div class="w-full flex justify-between border-t my-1 py-2">
-									<span class="">Tổng cộng</span> <span class="font-bold"><fmt:setLocale
-											value="vi_VN" scope="session" /> <fmt:formatNumber
-											value="${order.orderTotal}" type="currency" /></span>
-								</div>
-								<div class="w-full border-b border-black"></div>
-							</c:forEach>
-						</table> --%>
 						<div class="order-row flex justify-between">
 							<div class="order-cell flex-1 p-2 border font-bold">Sản
 								phẩm</div>
@@ -163,9 +126,6 @@
 										</div>
 									</div>
 
-
-
-
 									<div
 										class="order-cell w-1/6 p-2 border text-center align-middle">${c.quantity}</div>
 									<div
@@ -175,28 +135,26 @@
 											type="currency" />
 									</div>
 
-
-									<!-- Rating Phuc -->
 									<div
 										class="order-cell w-1/6 p-2 border text-center align-middle">
-										<ul class="list-inline product-ratings">
-											<li><i class="rating fa fa-star"></i></li>
-											<li><i class="rating fa fa-star"></i></li>
-											<li><i class="rating fa fa-star"></i></li>
-											<li><i class="rating fa fa-star"></i></li>
-											<li><i class="rating fa fa-star"></i></li>
-										</ul>
+										<div class="product-ratings" data-order-id="${order.id}"
+											data-product-id="${c.product.id}">
+											<ul class="list-inline">
+												<li><i class="rating fa fa-star"></i></li>
+												<li><i class="rating fa fa-star"></i></li>
+												<li><i class="rating fa fa-star"></i></li>
+												<li><i class="rating fa fa-star"></i></li>
+												<li><i class="rating fa fa-star"></i></li>
+											</ul>
+										</div>
 									</div>
 								</div>
-
-
-
 							</c:forEach>
 
 							<div class="w-full flex justify-between my-1 p-2">
 								<span class="">Tổng cộng:</span><span class="font-bold"><fmt:setLocale
-										value="vi_VN" scope="session" />
-									<fmt:formatNumber value="${order.totalPrice}" type="currency" /></span>
+										value="vi_VN" scope="session" /> <fmt:formatNumber
+										value="${order.totalPrice}" type="currency" /></span>
 							</div>
 							<div class="w-full border-b border-black"></div>
 						</c:forEach>
@@ -226,12 +184,14 @@
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
 	<script>
 		$(document)
 				.ready(
 						function() {
 							// Bắt sự kiện click vào bất kỳ ngôi sao nào trong danh sách đánh giá
-							$(".product-ratings li")
+							$(".product-ratings ul li")
 									.click(
 											function() {
 												var clickedIndex = $(this)
@@ -253,15 +213,20 @@
 												// Lấy id sản phẩm từ thuộc tính data-product-id của phần tử cha
 												var productId = $(this)
 														.closest(
-																'.product-item')
+																'.product-ratings')
 														.data('product-id');
+												var orderId = $(this).closest(
+														'.product-ratings')
+														.data('order-id');
 
 												// Gọi AJAX để gửi dữ liệu đánh giá lên server
 												$
 														.ajax({
-															url : "submit-rating.php", // Đường dẫn tới file xử lý AJAX (chỉnh sửa tùy theo cấu trúc của bạn)
+															url : "/LightStudio/store/user-info/order-history/submit-rating", // Đường dẫn tới controller xử lý
 															method : "POST",
 															data : {
+																orderId : orderId,
+																customerId : "${customerEntity.id}",
 																productId : productId,
 																rating : clickedIndex
 															},
@@ -269,7 +234,22 @@
 																	response) {
 																console
 																		.log("Đã gửi đánh giá thành công.");
-																// Xử lý phản hồi từ server nếu cần thiết
+																console
+																		.log(
+																				"Order ID:",
+																				orderId);
+																console
+																		.log(
+																				"Customer ID:",
+																				"${customerEntity.id}");
+																console
+																		.log(
+																				"Product ID:",
+																				productId);
+																console
+																		.log(
+																				"Rating:",
+																				clickedIndex);
 															},
 															error : function(
 																	xhr,

@@ -6,26 +6,56 @@ import javax.persistence.*;
 @Table(name = "RatingProduct")
 public class RatingProductEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", updatable = false, nullable = false)
+	private int id;
 
+    // Mối quan hệ nhiều-1 đến CustomerEntity
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
 
+    // Mối quan hệ nhiều-1 đến OrderDetailEntity, chỉ định cột không được thêm hoặc cập nhật
     @ManyToOne
     @JoinColumns({
-        @JoinColumn(name = "order_id", referencedColumnName = "order_id"),
-        @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+        @JoinColumn(name = "order_id", referencedColumnName = "order_id", insertable = false, updatable = false),
+        @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     })
     private OrderDetailEntity orderDetail;
 
     @Column(name = "rating")
     private int rating;
 
-    // Getters and Setters
+    @Column(name = "order_id")
+    private String orderId;
+    
+    @Column(name = "product_id")
+    private String productId;
+
+    // Các phương thức getter và setter cho orderId và productId
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    // Constructor mặc định
+    public RatingProductEntity() {
+        // Không có tham số, có thể để trống hoặc thực hiện các khởi tạo khác nếu cần
+    }
+
+    // Các phương thức getter và setter cho các thuộc tính khác
     public int getId() {
         return id;
     }
@@ -57,14 +87,4 @@ public class RatingProductEntity {
     public void setRating(int rating) {
         this.rating = rating;
     }
-
-	public RatingProductEntity(int id, CustomerEntity customer, OrderDetailEntity orderDetail, int rating) {
-		super();
-		this.id = id;
-		this.customer = customer;
-		this.orderDetail = orderDetail;
-		this.rating = rating;
-	}
-    
-    
 }

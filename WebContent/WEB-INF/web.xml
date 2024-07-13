@@ -15,6 +15,17 @@
 		<servlet-name>spring</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+  <servlet-name>RatingServlet</servlet-name>
+  <servlet-class>com.example.RatingServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>RatingServlet</servlet-name>
+  <url-pattern>/submit-rating</url-pattern>
+</servlet-mapping>
+	
+	
 	<filter>
 		<filter-name>utf8</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
