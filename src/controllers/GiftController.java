@@ -113,7 +113,7 @@ public class GiftController {
 			model.addAttribute("listFavorite", method.getListFavourite(
 					method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
-		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+//		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
 		
 //		// ĐỀ XUẤT
 		// Lấy mã khách hàng từ phiên làm việc
