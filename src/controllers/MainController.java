@@ -71,8 +71,13 @@ public class MainController {
 			model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
 		
+		
 		// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-//		String listMHStr = getRecommendation("P5610");
+		// Lấy mã khách hàng từ phiên làm việc
+//	    String customerId = (String) httpSession.getAttribute("customerId");
+//	    System.out.println("mã kahcsh hanbg đăng nhập "+ customerId);
+//	    
+//		String listMHStr = method.getRecommendation("U0013");
 //		String tmp = listMHStr.replace("'", "");
 //		tmp = tmp.replace("[", "");
 //		tmp = tmp.replace("]", "");
@@ -109,47 +114,65 @@ public class MainController {
 //	model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 //}
 
-		/* addProductsForTesting(); */
+//		// ĐỀ XUẤT
+//		// Lấy mã khách hàng từ phiên làm việc
+//	    
+//		String customerId = method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"));
+//	    System.out.println("mã kahcsh hanbg đăng nhập "+ customerId);
+//	    if(customerId != null) {
+//	    	System.out.println("dhasjdsa");
+//		String listMHStr = method.getRecommendation(customerId);
+//		String tmp = listMHStr.replace("'", "");
+//		tmp = tmp.replace("[", "");
+//		tmp = tmp.replace("]", "");
+//		tmp = tmp.replace(" ", "");
+//		
+//		System.out.print(tmp);
+//		String[] tmp2= tmp.split(",");
+//		
+//		List<ProductEntity> listProductDeXuat = new ArrayList<>();
+//		for(String s:tmp2) {
+//			
+//			ProductEntity prdtmp= method.getProduct(s);
+//			if (prdtmp != null) {
+//		        listProductDeXuat.add(prdtmp);
+//		        System.out.println("\nCác sản phẩm được đề xuất: " + prdtmp.getId() + "\n");
+//		    } else {
+//		        System.out.println("\nSản phẩm với ID " + s + " không tồn tại.\n");
+//		    }
+//			System.out.println("\n Các sản phẩm được đề xuất: "+ prdtmp.getId()+"\n");
+//		}
+//
+//
+//		model.addAttribute("listDXSP", listProductDeXuat);
+//		httpSession.setAttribute("listCategory", method.getListCategory());
+//		if(httpSession.getAttribute("customerUsername")!=null) {
+//			int sum = 0;
+//		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
+//			sum = sum + c.getQuantity();
+//		}
+//		System.out.println(sum);
+//		httpSession.setAttribute("customerTotalQuantity", sum);
+//		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+//}
+//	
+//		model.addAttribute("listDXSP", listProductDeXuat);
+//		httpSession.setAttribute("listCategory", method.getListCategory());
+//		if(httpSession.getAttribute("customerUsername")!=null) {
+//			int sum = 0;
+//		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
+//			sum = sum + c.getQuantity();
+//		}
+//		System.out.println(sum);
+//		httpSession.setAttribute("customerTotalQuantity", sum);
+//		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+//	}			
+//		}
+//		
+//		// DE XUAT
 		return "store/index";
 	}
-//	public String getRecommendation(String maMH) {
-//		String s = null;
-//		String str = null;
-//		try {
-//
-//			// run the Unix "ps -ef" command
-//			// using the Runtime exec method:
-//			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
-//			Process p = Runtime.getRuntime().exec(cmd);
-//
-//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//
-//			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//
-//			// read the output from the command
-//			System.out.println("Here is the standard output of the command:\n");
-//			while ((s = stdInput.readLine()) != null) {
-//				System.out.println(s);
-//
-//				str = s;
-//			}
-//
-//			// read any errors from the attempted command
-//			System.out.println("Here is the standard error of the command (if any):\n");
-//			while ((s = stdError.readLine()) != null) {
-//				System.out.println(s);
-//			}
-//
-//			// System.exit(0);
-//		} catch (IOException e) {
-//			System.out.println("exception happened - here's what I know: ");
-//			e.printStackTrace();
-//			// System.exit(-1);
-//		}
-//		return str;
-//
-//	}
-	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	
 	
 
 

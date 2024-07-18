@@ -19,7 +19,7 @@ import sys
 plt.style.use("ggplot")
 
 #web_ratings = pd.read_csv('ratings_Beauty.csv')
-web_ratings = pd.read_csv('C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\dataFavorite\\ratings.csv')
+web_ratings = pd.read_csv('D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\dataFavorite\\ratings.csv')
 
 web_ratings = web_ratings.dropna()
 web_ratings.head()

@@ -35,6 +35,47 @@ public class Methods {
 		this.factory = factory;
 	}
 	
+//	// ĐỀ XUẤT
+//
+	public String getRecommendation(String idkH) {
+		String s = null;
+		String str = null;
+		try {
+
+			// run the Unix "ps -ef" command
+			// using the Runtime exec method:
+			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\CollaborativeFilteringUser.py " + idkH;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			// read the output from the command
+			System.out.println("Here is the standard output of the command:\n");
+			while ((s = stdInput.readLine()) != null) {
+				System.out.println(s);
+
+				str = s;
+			}
+
+			// read any errors from the attempted command
+			System.out.println("Here is the standard error of the command (if any):\n");
+			while ((s = stdError.readLine()) != null) {
+				System.out.println(s);
+			}
+
+			// System.exit(0);
+		} catch (IOException e) {
+			System.out.println("exception happened - here's what I know: ");
+			e.printStackTrace();
+			// System.exit(-1);
+		}
+		return str;
+
+	}
+	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	
 	public String createTheNextCustomerId() {
 		Session session = factory.getCurrentSession();
 		String hql = "SELECT c.id FROM CustomerEntity c WHERE c.id=(SELECT MAX(cc.id) FROM CustomerEntity cc)";
@@ -52,46 +93,6 @@ public class Methods {
 	}
 	
 	
-//	// ĐỀ XUẤT
-//
-//	public String getRecommendation(String maMH) {
-//		String s = null;
-//		String str = null;
-//		try {
-//
-//			// run the Unix "ps -ef" command
-//			// using the Runtime exec method:
-//			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
-//			Process p = Runtime.getRuntime().exec(cmd);
-//
-//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//
-//			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//
-//			// read the output from the command
-//			System.out.println("Here is the standard output of the command:\n");
-//			while ((s = stdInput.readLine()) != null) {
-//				System.out.println(s);
-//
-//				str = s;
-//			}
-//
-//			// read any errors from the attempted command
-//			System.out.println("Here is the standard error of the command (if any):\n");
-//			while ((s = stdError.readLine()) != null) {
-//				System.out.println(s);
-//			}
-//
-//			// System.exit(0);
-//		} catch (IOException e) {
-//			System.out.println("exception happened - here's what I know: ");
-//			e.printStackTrace();
-//			// System.exit(-1);
-//		}
-//		return str;
-//
-//	}
-//	// ĐỀ XUẤT
 	
 
 	public String createTheNextOrderId() {

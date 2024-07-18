@@ -93,46 +93,7 @@ public class GiftController {
 //			return str;
 //
 //		}
-//	
-//	
-//	// RECOMMENDDDDDDDDDDDDDDDDĐ
-//	public String getRecommendation(String maMH) {
-//		String s = null;
-//		String str = null;
-//		try {
-//
-//			// run the Unix "ps -ef" command
-//			// using the Runtime exec method:
-//			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
-//			Process p = Runtime.getRuntime().exec(cmd);
-//
-//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//
-//			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//
-//			// read the output from the command
-//			System.out.println("Here is the standard output of the command:\n");
-//			while ((s = stdInput.readLine()) != null) {
-//				System.out.println(s+"PHUC");
-//
-//				str = s;
-//			}
-//
-//			// read any errors from the attempted command
-//			System.out.println("Here is the standard error of the command (if any):\n");
-//			while ((s = stdError.readLine()) != null) {
-//				System.out.println(s);
-//			}
-//
-//			// System.exit(0);
-//		} catch (IOException e) {
-//			System.out.println("exception happened - here's what I know: ");
-//			e.printStackTrace();
-//			// System.exit(-1);
-//		}
-//		return str;
-//
-//	}
+
 
 	@RequestMapping("")
 	public String store(ModelMap model, HttpSession httpSession) {
@@ -186,6 +147,59 @@ public class GiftController {
 					method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
 		model.addAttribute("listlx", method.getTop4ProductsWithTheMostViews());
+		
+//		// ĐỀ XUẤT
+		// Lấy mã khách hàng từ phiên làm việc
+	    String customerId = (String) httpSession.getAttribute("customerUsername");
+	    System.out.println("mã kahcsh hanbg đăng nhập "+ customerId);
+		String listMHStr = method.getRecommendation(customerId);
+		String tmp = listMHStr.replace("'", "");
+		tmp = tmp.replace("[", "");
+		tmp = tmp.replace("]", "");
+		tmp = tmp.replace(" ", "");
+		
+		System.out.print(tmp);
+		String[] tmp2= tmp.split(",");
+		
+		List<ProductEntity> listProductDeXuat = new ArrayList<>();
+		for(String s:tmp2) {
+			
+			ProductEntity prdtmp= method.getProduct(s);
+			if (prdtmp != null) {
+		        listProductDeXuat.add(prdtmp);
+		        System.out.println("\nCác sản phẩm được đề xuất: " + prdtmp.getId() + "\n");
+		    } else {
+		        System.out.println("\nSản phẩm với ID " + s + " không tồn tại.\n");
+		    }
+			System.out.println("\n Các sản phẩm được đề xuất: "+ prdtmp.getId()+"\n");
+		}
+
+
+		model.addAttribute("listDXSP", listProductDeXuat);
+		httpSession.setAttribute("listCategory", method.getListCategory());
+		if(httpSession.getAttribute("customerUsername")!=null) {
+			int sum = 0;
+		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
+			sum = sum + c.getQuantity();
+		}
+		System.out.println(sum);
+		httpSession.setAttribute("customerTotalQuantity", sum);
+		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+}
+	
+		model.addAttribute("listDXSP", listProductDeXuat);
+		httpSession.setAttribute("listCategory", method.getListCategory());
+		if(httpSession.getAttribute("customerUsername")!=null) {
+			int sum = 0;
+		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
+			sum = sum + c.getQuantity();
+		}
+		System.out.println(sum);
+		httpSession.setAttribute("customerTotalQuantity", sum);
+		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+	}
+		
+		// DE XUAT
 		
 		
 		return "store/index";
@@ -705,7 +719,7 @@ public class GiftController {
 	        }
 	    } catch (Exception e) {
 	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
-	        return "store/order-history"; // Xử lý ngoại lệ nếu có
+	        return "store/user-info"; // Xử lý ngoại lệ nếu có
 	    }
 	}
 
@@ -1149,6 +1163,75 @@ public class GiftController {
 		return "store/user-favorite";
 	}
 
+//	@RequestMapping("/insert-to-favlist/{productId}/{redirectPath}")
+//	public String insertToFavouriteList(String customerId, @PathVariable("productId") String productId,
+//			@PathVariable("redirectPath") String redirectPath, HttpSession httpSession, RedirectAttributes attributes) {
+//		Methods method = new Methods(factory);
+//		httpSession.setAttribute("listCategory", method.getListCategory());
+//		Session session = factory.openSession();
+//		Transaction t = session.beginTransaction();
+//		FavoriteProductEntity fp = new FavoriteProductEntity();
+//		
+////		httpSession.setAttribute("customerId", customerId);
+//		
+//		if (method.favItemIsExit(productId, httpSession)) {
+//			if (method.deleteProductFromFavourite(productId, httpSession)) {
+//				attributes.addFlashAttribute("message", "Đã xóa khỏi danh sách yêu thích");
+//				System.out.println("remove from fav list successful!-------------");
+//			}
+//		} else {
+//			fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+//			fp.setProduct(method.getProduct(productId));
+//			
+//			
+//			// Random Rating
+//			Random random = new Random();
+//			int minRating = 1;
+//			int maxRating = 5;
+//			int randomRating = random.nextInt(maxRating - minRating + 1) + minRating;
+//			fp.setRating(randomRating);
+//			
+//			try {
+//				session.save(fp);
+//				
+//				// lưu đánh giá
+//
+//				fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+//				CustomerEntity customer = fp.getCustomer();
+//				
+//				String list = customer.getId() + "," + productId + "," + fp.getRating()  ;
+////				String tmp = saveRatingRecord(list);
+//				String tmp = "";
+//				
+//				// luu vao database cho nay
+//
+//				System.out.println("get danh gia");
+//				System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + fp.getRating());
+//				System.out.println(" PHUC "+" "+tmp);
+//				// lưu đánh giá
+//				
+//				t.commit();
+//				System.out.println("Insert to fav list successful!-------------");
+//				attributes.addFlashAttribute("message", "Đã thêm vào danh sách yêu thích");
+//				
+//
+//
+//			} catch (Exception ex) {
+//				t.rollback();
+//				System.out.println("--------Insert to fav list unsuccessful!");
+//			} finally {
+//
+//				session.close();
+//			}
+//		}
+//		
+//		
+//		return returnRedirectControl(redirectPath);
+////			return "redirect:/store/user-info/favorite";
+//	}
+	
+	
+	// Theem vaof danh sach yeu thich
 	@RequestMapping("/insert-to-favlist/{productId}/{redirectPath}")
 	public String insertToFavouriteList(String customerId, @PathVariable("productId") String productId,
 			@PathVariable("redirectPath") String redirectPath, HttpSession httpSession, RedirectAttributes attributes) {
@@ -1157,63 +1240,30 @@ public class GiftController {
 		Session session = factory.openSession();
 		Transaction t = session.beginTransaction();
 		FavoriteProductEntity fp = new FavoriteProductEntity();
-		
-//		httpSession.setAttribute("customerId", customerId);
-		
 		if (method.favItemIsExit(productId, httpSession)) {
-			if (method.deleteProductFromFavourite(productId, httpSession)) {
+			if(method.deleteProductFromFavourite(productId, httpSession)) {
 				attributes.addFlashAttribute("message", "Đã xóa khỏi danh sách yêu thích");
 				System.out.println("remove from fav list successful!-------------");
 			}
 		} else {
 			fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
 			fp.setProduct(method.getProduct(productId));
-			
-			
-			// Random Rating
-			Random random = new Random();
-			int minRating = 1;
-			int maxRating = 5;
-			int randomRating = random.nextInt(maxRating - minRating + 1) + minRating;
-			fp.setRating(randomRating);
-			
 			try {
 				session.save(fp);
-				
-				// lưu đánh giá
-
-				fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-				CustomerEntity customer = fp.getCustomer();
-				
-				String list = customer.getId() + "," + productId + "," + fp.getRating()  ;
-//				String tmp = saveRatingRecord(list);
-				String tmp = "";
-				
-				// luu vao database cho nay
-
-				System.out.println("get danh gia");
-				System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + fp.getRating());
-				System.out.println(" PHUC "+" "+tmp);
-				// lưu đánh giá
-				
 				t.commit();
 				System.out.println("Insert to fav list successful!-------------");
 				attributes.addFlashAttribute("message", "Đã thêm vào danh sách yêu thích");
-				
-
 
 			} catch (Exception ex) {
 				t.rollback();
 				System.out.println("--------Insert to fav list unsuccessful!");
 			} finally {
-
 				session.close();
 			}
 		}
-		
-		
+
 		return returnRedirectControl(redirectPath);
-//			return "redirect:/store/user-info/favorite";
+//		return "redirect:/store/user-info/favorite";
 	}
 
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
