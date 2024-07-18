@@ -31,7 +31,9 @@ public class OrderDAO extends DAO {
 	// GET ORDERS
 	public Orders getOrders() throws IOException {
 		Session session = factory.openSession();
-		String hql = "FROM OrderEntity";
+//		String hql = "FROM OrderEntity";
+		String hql = "FROM OrderEntity ORDER BY orderDate DESC";
+
 		Query query = session.createQuery(hql);
 		List<OrderEntity> list = query.list();
 		Orders orders = new Orders(list);

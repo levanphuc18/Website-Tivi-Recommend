@@ -62,39 +62,6 @@ public class GiftController {
 	BcryptEncryption encryption = new BcryptEncryption();
 	
 	
-//	// LƯU ĐÁNH GIÁ 
-//		public String saveRatingRecord(String red) {
-//			String s = null;
-//			String str = null;
-//			try {
-//
-//				// run the Unix "ps -ef" command
-//				// using the Runtime exec method:
-//				String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\add-to-csv.py " + red;
-//				Process p = Runtime.getRuntime().exec(cmd);
-//
-//				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//
-//				BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//
-//				// read the output from the command
-//				System.out.println("Here is the standard output of the command:\n");
-//				while ((s = stdInput.readLine()) != null) {
-//					System.out.println(s);
-//
-//					str = s;
-//				}
-//
-//			} catch (IOException e) {
-//				System.out.println("exception happened - here's what I know: ");
-//				e.printStackTrace();
-//				// System.exit(-1);
-//			}
-//			return str;
-//
-//		}
-
-
 	@RequestMapping("")
 	public String store(ModelMap model, HttpSession httpSession) {
 		Methods method = new Methods(factory);
@@ -680,6 +647,46 @@ public class GiftController {
 	}
 
 	
+//	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
+//	public String submitRating(@RequestParam("orderId") String orderId,
+//								@RequestParam("customerId") String customerId,
+//	                           @RequestParam("productId") String productId,
+//	                           @RequestParam("rating") int rating,
+//	                           ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
+//	    
+//	    Methods method = new Methods(factory);
+//	    try {
+//	        // Lấy thông tin customer từ session và orderId, productId từ request
+//	        CustomerEntity customer = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername"));
+//	        
+//	     // Tạo một đối tượng RatingProductEntity từ dữ liệu nhận được
+//	        RatingProductEntity ratingEntity = new RatingProductEntity();
+//	        ratingEntity.setOrderId(orderId);    // Thiết lập orderId
+//	        ratingEntity.setCustomer(customer);  // Thiết lập khách hàng
+//	        ratingEntity.setProductId(productId);  // Thiết lập productId
+//	        ratingEntity.setRating(rating);      // Thiết lập rating
+//
+//	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
+//	        if (method.insertRating(ratingEntity)) {
+//	        	
+//	        	// Trong phương thức submitRating của controller
+//	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
+//	        	model.addAttribute("listOrder", listOrder);
+//	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
+//	            httpSession.setAttribute("customerUsername", customer.getUsername());
+//	            System.out.println("order-history- Rating success");
+//	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
+//	        } else {
+//	            model.addAttribute("message", "Đánh giá thất bại!");
+//	            System.out.println("order-history- Rating fail");
+//	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
+//	        }
+//	    } catch (Exception e) {
+//	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
+//	        return "store/user-info"; // Xử lý ngoại lệ nếu có
+//	    }
+//	}
+	
 	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
 	public String submitRating(@RequestParam("orderId") String orderId,
 								@RequestParam("customerId") String customerId,
@@ -699,18 +706,26 @@ public class GiftController {
 	        ratingEntity.setProductId(productId);  // Thiết lập productId
 	        ratingEntity.setRating(rating);      // Thiết lập rating
 
-
 	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
 	        if (method.insertRating(ratingEntity)) {
 	        	
 	        	// Trong phương thức submitRating của controller
 	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
 	        	model.addAttribute("listOrder", listOrder);
-
-	        	
 	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
 	            httpSession.setAttribute("customerUsername", customer.getUsername());
-	            System.out.println("order-history- Rating success");
+	            System.out.println("order-history- Rating success \n");
+	            
+	         // lưu đánh giá
+	        String list = customer.getId() + "," + productId + "," + ratingEntity.getRating()  ;
+			String tmp = method.saveRatingRecord(list);
+//			String tmp = "";
+			
+			System.out.println("get danh gia");
+			System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + ratingEntity.getRating());
+//			System.out.println(" PHUC "+" "+ tmp);
+			// lưu đánh giá
+	            
 	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
 	        } else {
 	            model.addAttribute("message", "Đánh giá thất bại!");

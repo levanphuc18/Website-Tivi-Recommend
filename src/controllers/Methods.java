@@ -35,8 +35,40 @@ public class Methods {
 		this.factory = factory;
 	}
 	
-//	// ĐỀ XUẤT
-//
+//	// LƯU ĐÁNH GIÁ 
+	public String saveRatingRecord(String rate) {
+		String s = null;
+		String str = null;
+		try {
+
+			// run the Unix "ps -ef" command
+			// using the Runtime exec method:
+			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-product-to-csv.py "  + rate;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			// read the output from the command
+			System.out.println("Here is the standard output of the command:\n");
+			while ((s = stdInput.readLine()) != null) {
+				System.out.println(s);
+
+				str = s;
+			}
+
+		} catch (IOException e) {
+			System.out.println("exception happened - here's what I know: ");
+			e.printStackTrace();
+			// System.exit(-1);
+		}
+		return str;
+
+	}
+	
+	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
 	public String getRecommendation(String idkH) {
 		String s = null;
 		String str = null;
