@@ -35,7 +35,34 @@ public class Methods {
 		this.factory = factory;
 	}
 	
-//	// LƯU ĐÁNH GIÁ 
+	// LƯU PRODUCT
+	public String saveProductRecord(String productId) {
+	    String s = null;
+	    String str = null;
+	    try {
+	        // Chạy lệnh Python với mã sản phẩm
+	    	String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-product-to-csv.py "  + productId;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+	        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+	        BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+	        // Đọc kết quả đầu ra của lệnh
+	        System.out.println("Here is the standard output of the command:\n");
+	        while ((s = stdInput.readLine()) != null) {
+	            System.out.println(s);
+	            str = s;
+	        }
+
+	    } catch (IOException e) {
+	        System.out.println("exception happened - here's what I know: ");
+	        e.printStackTrace();
+	    }
+	    return str;
+	}
+	
+	// LƯU ĐÁNH GIÁ 
 	public String saveRatingRecord(String rate) {
 		String s = null;
 		String str = null;
@@ -43,7 +70,7 @@ public class Methods {
 
 			// run the Unix "ps -ef" command
 			// using the Runtime exec method:
-			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-product-to-csv.py "  + rate;
+			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-rating-to-csv.py "  + rate;
 			Process p = Runtime.getRuntime().exec(cmd);
 
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
