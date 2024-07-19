@@ -74,6 +74,17 @@
                                  <form:errors path = "invoiceType.id" class="invalid-feedback"/>
 	                          	</div>
 	                          </div>
+	                          
+	                          <div class="row mb-4">
+                               <div class="col-12">
+                                 <label class="" for="invoice">Nhà cung cấp</label>
+                                 <form:select path="supplier.id"  class="form-select ${supplierValid }" id="supplier">
+                                     <form:option value="">Chọn nhà cung cấp</form:option>
+                                     <form:options items="${suppliers}" itemLabel="name" itemValue="id"/>
+                                 </form:select>
+                                 <form:errors path = "supplier.id" class="invalid-feedback"/>
+	                          	</div>
+	                          </div>
                                
                                <div class="row mb-4">
                                  <div class="col-6">

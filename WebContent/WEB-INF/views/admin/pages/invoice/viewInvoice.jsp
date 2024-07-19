@@ -120,6 +120,8 @@
               <dl class="row text-sm-right">
                 <dt class="col-6"><strong>Số hoá đơn.</strong></dt>
                 <dd class="col-6">${invoice.id }</dd>
+                <dt class="col-6"><strong>Nhà cung cấp.</strong></dt>
+                <dd class="col-6">${invoice.supplier.id}</dd>
                 <dt class="col-6"><strong>Ngày lập:</strong></dt>
                 <dd class="col-6">
                 	<fmt:setLocale value="vi_VN" scope="session"/>
@@ -164,7 +166,7 @@
                       </td>
                       
                       <td class="text-wrap">${invoiceDetail.product.name }</td>
-                      <td>${invoiceDetail.product.unit }</td>
+                       <td>${invoiceDetail.product.unit }</td> 
                       <td>${invoiceDetail.quantity }</td>
                       <td>
                       	<fmt:setLocale value="vi_VN" scope="session" />

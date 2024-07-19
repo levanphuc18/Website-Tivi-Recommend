@@ -107,6 +107,7 @@ public class InvoiceController {
 
 		model.addAttribute("invoice", invoice);
 		model.addAttribute("invoiceTypes", invoiceDAO.getInoivceTypes());
+		model.addAttribute("suppliers", invoiceDAO.getSuppliers());
 		model.addAttribute("title", "Thêm hoá đơn");
 		model.addAttribute("pageName", "addInvoice");
 		return viewsDirectory + "addInvoice";
@@ -166,10 +167,17 @@ public class InvoiceController {
 			model.addAttribute("invoiceTypeValid", "is-invalid");
 			errorsCount++;
 		}
+		
+		if (invoice.getSupplier().getId().isEmpty()) {
+			errors.rejectValue("supplier", "invoice", "Chọn cấu hình sản phẩm");
+			model.addAttribute("supplierValid", "is-invalid");
+			errorsCount++;
+		}
 
 		if (errorsCount != 0) {
 			model.addAttribute("invoice", invoice);
 			model.addAttribute("invoiceTypes", invoiceDAO.getInoivceTypes());
+			model.addAttribute("suppliers", invoiceDAO.getSuppliers());
 			model.addAttribute("title", "Thêm hoá đơn");
 			model.addAttribute("pageName", "addInvoice");
 			return viewsDirectory + "addInvoice";

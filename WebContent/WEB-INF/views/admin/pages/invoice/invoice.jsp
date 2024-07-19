@@ -102,6 +102,7 @@
                     <thead class="thead-dark">
                         <tr>
                             <th class="border-gray-200 rounded-start">#</th>
+                             <th class="border-gray-200">Nhà cung cấp</th>
                             <th class="border-gray-200">Loại hoá đơn</th>
                             <th class="border-gray-200">Ngày tạo</th>
                             <th class="border-gray-200">Giờ tạo</th>
@@ -120,6 +121,7 @@
                                     ${invoice.id}
                                 </a>
                             </td>
+                            <td><span class="fw-normal">${invoice.supplier.name}</span></td>
                             <td><span class="fw-normal">${invoice.invoiceType.name}</span></td>
                             <%-- <td><img src="${invoice.image}" width=100 height=100 alt="${invoice.admin.name}"/></td> --%>
                              <td>
@@ -156,16 +158,7 @@
 										<i class="bi bi-eye-fill dropdown-icon text-gray-400 me-2 icon-sm"></i>
 										Chi tiết</a>
                                     
-                                        
-                                        <a class="dropdown-item text-warning" href="${applicationScope.categoryPage}/edit/${category.id}">
-	                                        <i class="bi bi-pencil-square dropdown-icon me-2"></i>
-	                                        Chỉnh sửa
-                                        </a>
-                                        
-                                        <a id="btnDelete" class="dropdown-item text-danger rounded-bottom" data-bs-toggle="modal" data-bs-target="#modal-warning" data-id="${category.id}">
-                                    <i class="bi bi-trash2-fill dropdown-icon me-2"></i>
-                                    Xoá
-                                 </a>
+
                                     </div>
                                 </div>
                             </td>

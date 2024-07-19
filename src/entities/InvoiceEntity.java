@@ -80,6 +80,17 @@ public class InvoiceEntity {
 	public void setInvoiceType(InvoiceTypeEntity invoiceType) {
 		this.invoiceType = invoiceType;
 	}
+	
+
+
+	// getter and setter
+	public SupplierEntity getSupplier() {
+	    return supplier;
+	}
+
+	public void setSupplier(SupplierEntity supplier) {
+	    this.supplier = supplier;
+	}
 
 	public List<InvoiceDetailEntity> getInvoiceDetails() {
 		return invoiceDetails;

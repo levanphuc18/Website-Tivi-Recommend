@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import entities.InvoiceEntity;
 import entities.InvoiceTypeEntity;
+import entities.SupplierEntity;
 import models.List.Invoices;
 
 @Transactional
@@ -79,6 +80,16 @@ public class InvoiceDAO extends DAO {
 		List<InvoiceTypeEntity> invoiceTypes = query.list();
 		session.close();
 		return invoiceTypes;
+	}
+	
+	// GET INVOICE TYPES
+	public List<SupplierEntity> getSuppliers() throws IOException {
+		Session session = factory.openSession();
+		String hql = "FROM SupplierEntity";
+		Query query = session.createQuery(hql);
+		List<SupplierEntity> suppliers = query.list();
+		session.close();
+		return suppliers;
 	}
 
 	// ADD INVOICE TO DB
