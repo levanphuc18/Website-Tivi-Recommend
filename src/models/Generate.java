@@ -8,6 +8,7 @@ import entities.CategoryEntity;
 import entities.ConfigEntity;
 import entities.InvoiceEntity;
 import entities.ProductEntity;
+import entities.SupplierEntity;
 
 public class Generate {
 	// GENERATE ID
@@ -71,6 +72,14 @@ public class Generate {
 			}
 			return null;
 		}
+		// GENERATE AND CHECK CONFIG ID thực tập
+		public static SupplierEntity searchSupplier(List<SupplierEntity> suppliers, String id) {
+			for (SupplierEntity supplier : suppliers) {
+				if (supplier.getId().equals(id))
+					return supplier;
+			}
+			return null;
+		}
 
 	public static String generateCategoryId(List<CategoryEntity> categories) {
 		String generatedString = null;
@@ -87,6 +96,15 @@ public class Generate {
 		do {
 			generatedString = "C" + generateId(4);
 		} while (searchConfig(configs, generatedString) != null);
+
+		return generatedString;
+	}
+	
+	public static String generateSupplierId(List<SupplierEntity> suppliers) {
+		String generatedString = null;
+		do {
+			generatedString = "S" + generateId(4);
+		} while (searchSupplier(suppliers, generatedString) != null);
 
 		return generatedString;
 	}

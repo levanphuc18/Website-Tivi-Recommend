@@ -15,8 +15,8 @@
       		<svg class="text-warning icon icon-xxl" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       	</div>
       
-        <h5 class="my-0 mb-2">Bạn chắc chắn muốn xoá?</h5>
-       <!--   <small class="my-0 mt-4 text-wrap text-gray-500">Hãy chắc chắn cấu hình này <span class="fw-bold">không tồn tại</span> sản phẩm nào</small>	-->
+        <h5 class="my-0 mb-2">Bạn có muốn xóa nhà cung cấp này?</h5>
+        <small class="my-0 mt-4 text-wrap text-gray-500">Hãy chắc chắn nhà cung cấp này <span class="fw-bold">không tồn tại</span> hóa đơn nào</small>
       </div>
       <div class="modal-footer">
         <a type="button" class="btn btn-danger" id="btnConfirm" href="">Đồng ý</a>

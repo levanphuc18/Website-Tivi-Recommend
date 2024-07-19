@@ -33,6 +33,10 @@ public class InvoiceEntity {
 	@ManyToOne()
 	@JoinColumn(name = "invoice_type_id")
 	private InvoiceTypeEntity invoiceType;
+	
+	@ManyToOne
+	@JoinColumn(name= "supplier_id")
+	private SupplierEntity supplier;
 
 	@OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<InvoiceDetailEntity> invoiceDetails;

@@ -15,6 +15,7 @@ import entities.InvoiceEntity;
 import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
+import entities.SupplierEntity;
 
 public class Pagination {
 
@@ -28,6 +29,7 @@ public class Pagination {
 		pagedListHolder.setPageSize(pageSize);
 		return pagedListHolder;
 	}
+	
 
 	// CATEGORY PAGINATION
 	public static PagedListHolder categoryPagination(HttpServletRequest request, List<CategoryEntity> categories,
@@ -44,6 +46,17 @@ public class Pagination {
 	public static PagedListHolder configPagination(HttpServletRequest request, List<ConfigEntity> configs,
 			int maxLinkedPages, int pageSize) {
 		PagedListHolder pagedListHolder = new PagedListHolder(configs);
+		int page = ServletRequestUtils.getIntParameter(request, "p", 0);
+		pagedListHolder.setPage(page);
+		pagedListHolder.setMaxLinkedPages(maxLinkedPages);
+		pagedListHolder.setPageSize(pageSize);
+		return pagedListHolder;
+	}
+	
+	// SUPPLIER PAGINATION
+	public static PagedListHolder supplierPagination(HttpServletRequest request, List<SupplierEntity> suppliers,
+			int maxLinkedPages, int pageSize) {
+		PagedListHolder pagedListHolder = new PagedListHolder(suppliers);
 		int page = ServletRequestUtils.getIntParameter(request, "p", 0);
 		pagedListHolder.setPage(page);
 		pagedListHolder.setMaxLinkedPages(maxLinkedPages);

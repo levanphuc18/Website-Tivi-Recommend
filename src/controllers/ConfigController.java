@@ -72,7 +72,7 @@ public class ConfigController {
 
 		model.addAttribute("pagedListHolder", pagedListHolder);
 		model.addAttribute("type", "danh mục");
-		model.addAttribute("title", "Quản lý Danh mục");
+		model.addAttribute("title", "Quản lý Cấu hình");
 
 		return viewsDirectory + "config";
 	}
@@ -102,7 +102,7 @@ public class ConfigController {
 			configDAO = new ConfigDAO(factory);
 			ConfigEntity config = configDAO.getConfig(id);
 			model.addAttribute("config", config);
-			model.addAttribute("title", "Sửa danh mục");
+			model.addAttribute("title", "Sửa cấu hình");
 			return viewsDirectory + "editConfig";
 		}
 
@@ -114,7 +114,7 @@ public class ConfigController {
 
 			configDAO = new ConfigDAO(factory);
 			if (modifiedConfig.getName().isEmpty()) {
-				errors.rejectValue("name", "config", "Nhập tên danh mục");
+				errors.rejectValue("name", "config", "Nhập tên cấu hình");
 				model.addAttribute("nameValid", "is-invalid");
 			}
 
@@ -122,7 +122,7 @@ public class ConfigController {
 				ConfigEntity config = configDAO.getConfig(id);
 				modifiedConfig.setImage(config.getImage());
 				model.addAttribute("config", modifiedConfig);
-				model.addAttribute("title", "Thêm Danh Mục");
+				model.addAttribute("title", "Thêm Cấu hình");
 				return viewsDirectory + "editConfig";
 			} else {
 				ConfigEntity config = configDAO.getConfig(id);
@@ -182,7 +182,7 @@ public class ConfigController {
 		public String renderAddConfigPage(ModelMap model) {
 			ConfigEntity config = new ConfigEntity();
 			model.addAttribute("config", config);
-			model.addAttribute("title", "Thêm Danh Mục");
+			model.addAttribute("title", "Thêm Cấu Hình");
 			return viewsDirectory + "addConfig";
 		}
 
