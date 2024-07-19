@@ -1,13 +1,17 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import entities.CartDetailEntity.CompositeKey;
@@ -26,6 +30,7 @@ public class OrderDetailEntity {
 	@ManyToOne
 	@JoinColumn(name = "product_id",referencedColumnName = "id",  insertable = false, updatable = false)
 	private ProductEntity product;
+
 
 	@Column(name = "quantity", nullable = true)
 	private int quantity;

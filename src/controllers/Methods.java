@@ -22,7 +22,9 @@ import entities.FavoriteProductEntity;
 import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
-import models.Md5Encryption;
+import entities.RatingProductEntity;
+import models.RatingModel;
+
 
 public class Methods {
 	
@@ -32,6 +34,106 @@ public class Methods {
 		super();
 		this.factory = factory;
 	}
+	
+	// LƯU PRODUCT
+	public String saveProductRecord(String productId) {
+	    String s = null;
+	    String str = null;
+	    try {
+	        // Chạy lệnh Python với mã sản phẩm
+	    	String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-product-to-csv.py "  + productId;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+	        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+	        BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+	        // Đọc kết quả đầu ra của lệnh
+	        System.out.println("Here is the standard output of the command:\n");
+	        while ((s = stdInput.readLine()) != null) {
+	            System.out.println(s);
+	            str = s;
+	        }
+
+	    } catch (IOException e) {
+	        System.out.println("exception happened - here's what I know: ");
+	        e.printStackTrace();
+	    }
+	    return str;
+	}
+	
+	// LƯU ĐÁNH GIÁ 
+	public String saveRatingRecord(String rate) {
+		String s = null;
+		String str = null;
+		try {
+
+			// run the Unix "ps -ef" command
+			// using the Runtime exec method:
+			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\add-rating-to-csv.py "  + rate;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			// read the output from the command
+			System.out.println("Here is the standard output of the command:\n");
+			while ((s = stdInput.readLine()) != null) {
+				System.out.println(s);
+
+				str = s;
+			}
+
+		} catch (IOException e) {
+			System.out.println("exception happened - here's what I know: ");
+			e.printStackTrace();
+			// System.exit(-1);
+		}
+		return str;
+
+	}
+	
+	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
+	public String getRecommendation(String idkH) {
+		String s = null;
+		String str = null;
+		try {
+
+			// run the Unix "ps -ef" command
+			// using the Runtime exec method:
+			String cmd = "python D:\\JAVA\\Eclipse\\Doanthuctap\\webbantivi\\WebContent\\resources\\python\\CollaborativeFilteringUser.py " + idkH;
+			Process p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			// read the output from the command
+			System.out.println("Here is the standard output of the command:\n");
+			while ((s = stdInput.readLine()) != null) {
+				System.out.println(s);
+
+				str = s;
+			}
+
+			// read any errors from the attempted command
+			System.out.println("Here is the standard error of the command (if any):\n");
+			while ((s = stdError.readLine()) != null) {
+				System.out.println(s);
+			}
+
+			// System.exit(0);
+		} catch (IOException e) {
+			System.out.println("exception happened - here's what I know: ");
+			e.printStackTrace();
+			// System.exit(-1);
+		}
+		return str;
+
+	}
+	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 	
 	public String createTheNextCustomerId() {
 		Session session = factory.getCurrentSession();
@@ -50,46 +152,6 @@ public class Methods {
 	}
 	
 	
-//	// ĐỀ XUẤT
-//
-//	public String getRecommendation(String maMH) {
-//		String s = null;
-//		String str = null;
-//		try {
-//
-//			// run the Unix "ps -ef" command
-//			// using the Runtime exec method:
-//			String cmd = "python C:\\Users\\levan\\OneDrive\\Desktop\\TTCS\\webbantivi1\\webbantivi\\WebContent\\resources\\python\\test.py " + maMH;
-//			Process p = Runtime.getRuntime().exec(cmd);
-//
-//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//
-//			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//
-//			// read the output from the command
-//			System.out.println("Here is the standard output of the command:\n");
-//			while ((s = stdInput.readLine()) != null) {
-//				System.out.println(s);
-//
-//				str = s;
-//			}
-//
-//			// read any errors from the attempted command
-//			System.out.println("Here is the standard error of the command (if any):\n");
-//			while ((s = stdError.readLine()) != null) {
-//				System.out.println(s);
-//			}
-//
-//			// System.exit(0);
-//		} catch (IOException e) {
-//			System.out.println("exception happened - here's what I know: ");
-//			e.printStackTrace();
-//			// System.exit(-1);
-//		}
-//		return str;
-//
-//	}
-//	// ĐỀ XUẤT
 	
 
 	public String createTheNextOrderId() {
@@ -182,6 +244,52 @@ public class Methods {
 		query.setParameter("email", customer.getEmail());
 		return query.executeUpdate() > 0;
 	}
+	
+//	// Lưu đánh giá sản phẩm
+//	public boolean saveRating(String customerId, String orderId, String productId, int rating) {
+//	    // Lấy phiên giao dịch hiện tại
+//		Session session = factory.getCurrentSession();
+//	    Transaction tx = null;
+//	    
+//	    try {
+//	        // Bắt đầu một giao dịch mới
+//	        tx = session.beginTransaction();
+//	        
+//	        // Lấy các thực thể Customer và OrderDetail từ cơ sở dữ liệu
+//	        CustomerEntity customer = (CustomerEntity) session.get(CustomerEntity.class, customerId);
+//	        OrderDetailEntity orderDetail = (OrderDetailEntity) session.createQuery(
+//	            "FROM OrderDetailEntity WHERE order.id = :orderId AND product.id = :productId")
+//	            .setParameter("orderId", orderId)
+//	            .setParameter("productId", productId)
+//	            .uniqueResult();
+//
+//	        // Tạo đối tượng RatingProductEntity và thiết lập các giá trị cần thiết
+//	        RatingModel ratingModel = new RatingModel(customerId, orderId, productId, rating);
+//
+//	        // Lưu đối tượng đánh giá vào cơ sở dữ liệu
+//	        session.save(ratingModel);
+//
+//	        // Cam kết giao dịch
+//	        tx.commit();
+//	        
+//	        // Trả về true nếu lưu thành công
+//	        return true;
+//	    } catch (Exception e) {
+//	        // Nếu có lỗi, hủy giao dịch
+//	        if (tx != null) {
+//	            tx.rollback();
+//	        }
+//	        
+//	        // In ra lỗi để kiểm tra
+//	        e.printStackTrace();
+//	        
+//	        // Trả về false nếu lưu không thành công
+//	        return false;
+//	    } finally {
+//	        // Đóng phiên giao dịch
+//	        session.close();
+//	    }
+//	}
 
 	// Cập nhập mật khẩu khách hàng
 	public boolean updateCustomerPassword(CustomerEntity customer, HttpSession httpSession) {
@@ -636,4 +744,26 @@ public class Methods {
 	        System.out.println(productList.size() + " PhucFilter \n");
 	        return productList;
 	    }
+	    
+	    
+	    public boolean insertRating(RatingProductEntity rating) {
+			Session session = factory.openSession();
+			Transaction t = session.beginTransaction();
+			try {
+				session.save(rating);
+				t.commit();
+				System.out.println("Insert successful!");
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				t.rollback();
+				System.out.println("Insert unsuccessful!");
+				return false;
+			} finally {
+				session.close();
+			}
+			return true;
+		}
+	    
+
 }

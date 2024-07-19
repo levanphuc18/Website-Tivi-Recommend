@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import entities.AccountEntity;
 import entities.AdminEntity;
 import models.AdminResetPasswordModel;
-import models.BcryptEncryption;
+//import models.BcryptEncryption;
 import models.Generate;
 import models.Mailer;
 import models.UploadFile;
@@ -60,7 +60,7 @@ public class AdminAuthController {
 	String viewsDirectory = "admin/pages/account/";
 
 	// thực tập mã hóa Bcrypt
-	BcryptEncryption encryption = new BcryptEncryption();
+//	BcryptEncryption encryption = new BcryptEncryption();
 	
 	// LOGIN
 	@RequestMapping(value = "login", method = RequestMethod.GET)
