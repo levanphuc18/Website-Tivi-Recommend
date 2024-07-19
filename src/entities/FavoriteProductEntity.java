@@ -24,17 +24,6 @@ public class FavoriteProductEntity {
 	@JoinColumn(name = "product_id")
 	private ProductEntity product;
 	
-	@Column(name = "rating")
-	private int rating;
-	
-	
-	public int getRating() {
-		return rating;
-	}
-
-	public void setRating(int rating) {
-		this.rating =rating ;
-	}
 
 	public int getId() {
 		return id;

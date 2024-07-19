@@ -144,11 +144,11 @@
 				<h3>
 					<a href="#"
 						class="hover:text-indigo-400 transition-colors text-3xl font-bold">Sản
-						phẩm có lượt xem nhiều</a>
+						phẩm phù hợp với bạn</a>
 				</h3>
 			</div>
 			<div class="new-product__list flex flex-wrap">
-				<c:forEach var="p" items="${listlx}">
+				<c:forEach var="p" items="${listProductRecommend}">
 					<div class="item w-1/4 px-3 mb-4 flex flex-col justify-between">
 						<div>
 							<div class="relative item-menu-container overflow-hidden">

@@ -97,6 +97,7 @@ public class ProductController {
 		model.addAttribute("configs", configs.getList());
 		model.addAttribute("product", new ProductEntity());
 		model.addAttribute("title", "Thêm sản phẩm");
+
 		return viewsDirectory + "addProduct";
 	}
 
@@ -158,6 +159,16 @@ public class ProductController {
 
 			product.setId(productId);
 			product.setDateAdded(new Date());
+			
+			// Luu product Recommend
+			Methods methods = new Methods(factory);
+			String idProduct = product.getId();
+			String tmp = methods.saveProductRecord(idProduct);
+//			String tmp = "";
+			
+			System.out.println("get id product");
+			System.out.println("productId: " + tmp);
+//			System.out.println(" PHUC "+" "+ tmp);
 
 			if (files.length > 0) {
 				List<ImageEntity> images = new ArrayList<ImageEntity>();
