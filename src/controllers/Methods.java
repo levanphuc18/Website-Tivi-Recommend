@@ -267,6 +267,8 @@ public class Methods {
 		query.setParameter("password", customer.getPassword());
 		return query.executeUpdate() > 0;
 	}
+	
+	// create random recovery
 	public boolean updateCustomerRecoveryCode(CustomerEntity customer, HttpSession httpSession) {
 		Session session = factory.getCurrentSession();
 		String hql = "UPDATE CustomerEntity c SET c.recoveryCode=:recoveryCode WHERE c.id=:id";
@@ -275,6 +277,7 @@ public class Methods {
 		query.setParameter("recoveryCode", AdminAuthController.generateRecoveryCode(5));
 		return query.executeUpdate() > 0;
 	}
+	
 	public boolean updateProductQuantityFromCartDetail(String productId, String quantity, HttpSession httpSession) {
 		Session session = factory.getCurrentSession();
 		String hql = "UPDATE CartDetailEntity c SET c.quantity=:quantity WHERE c.id.customer_id=:customerId and c.id.product_id=:productId";

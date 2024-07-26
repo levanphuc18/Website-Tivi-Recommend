@@ -295,7 +295,10 @@ public class GiftController {
 				if (account.getRecoveryCode().trim()
 						.equals(method.getRecoveryCodeOfCustomerWithUsername(account.getUsername()))) {
 					CustomerEntity ce = new CustomerEntity();
-					ce.setPassword("12345");
+					
+					// mã hóa pass Bcrypt
+					String passwword = encryption.hashPassword("12345");
+					ce.setPassword(passwword);
 					ce.setId(method.getCustomerIdByUserName(account.getUsername().trim()));
 					if (method.updateCustomerForgotPassword(ce, httpSession)) {
 						if (method.updateCustomerRecoveryCode(ce, httpSession)) {
