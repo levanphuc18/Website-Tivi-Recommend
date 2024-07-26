@@ -235,8 +235,7 @@
 								<div class="w-full">
 									<f:input type="text" path="shipAddress" id=""
 										class="w-full p-2 border-2 border-gray-300 rounded-md mb-3"
-										placeholder="Địa chỉ (*)"
-										value="${customerEntity.address}" />
+										placeholder="Địa chỉ (*)" value="${customerEntity.address}" />
 									<f:errors path="shipAddress" cssClass="error" element="div" />
 								</div>
 
@@ -300,8 +299,8 @@
 							</div>
 							<div class="flex justify-between border-t my-1 py-2">
 								<span class="">Phí vận chuyển</span> <span class="font-bold"><fmt:setLocale
-										value="vi_VN" scope="session" /> <fmt:formatNumber
-										value="0" type="currency" /></span>
+										value="vi_VN" scope="session" /> <fmt:formatNumber value="0"
+										type="currency" /></span>
 							</div>
 							<div class="flex justify-between border-t my-1 py-2">
 								<span class="">Tổng cộng</span> <span class="font-bold"><fmt:setLocale
@@ -314,20 +313,31 @@
 					<div class="w-full flex justify-end">
 						<button
 							class="px-4 py-2 my-2 font-bold bg-indigo-400 hover:bg-indigo-500 transition-colors text-white rounded-md">Thanh
-							toán</button>
+							toán khi nhận hàng</button>
 					</div>
-
 				</f:form>
 				
+					<!--  VN-PAY -->
+					<div class="w-full flex justify-end">
+						<form action="/LightStudio/payment/vnpay" method="get">
+							<!-- Bạn có thể thêm các trường dữ liệu ẩn nếu cần -->
+							<!-- Ví dụ: <input type="hidden" name="orderId" value="${order.id}"> -->
+							<button type="submit"
+								class="px-4 py-2 my-2 font-bold bg-indigo-400 hover:bg-indigo-500 transition-colors text-white rounded-md">
+								Thanh toán bằng VNPAY</button>
+						</form>
+					</div>
+
 			</div>
 
 		</div>
 	</main>
 	<%@include file="/WEB-INF/views/store/include/store-footer.jsp"%>
-	<script src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
+	<script
+		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 	<!-- <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script> -->
-<%-- 	<script src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script> --%>
+	<%-- 	<script src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script> --%>
 	<!-- <script src="./assets/js/main.js"></script> -->
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
 	<%-- <script src="<c:url value='/resources/store/assets/js/check-out.js'/>"></script> --%>

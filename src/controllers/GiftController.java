@@ -5,10 +5,11 @@ import java.io.BufferedReader;
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +49,7 @@ import models.Mailer;
 
 import models.OrderModel;
 import models.RatingModel;
+import vnpay.Config;
 
 @Transactional
 @Controller
@@ -201,57 +203,7 @@ public class GiftController {
 		model.addAttribute("listFavorite", method.getListFavourite(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		System.out.println(productId + "; " + method.getProduct(productId).getName());
-		
-		
-		
-		
-//		// ĐỀ XUẤT
-//		String listMHStr = getRecommendation(productId);
-//		String tmp = listMHStr.replace("'", "");
-//		tmp = tmp.replace("[", "");
-//		tmp = tmp.replace("]", "");
-//		tmp = tmp.replace(" ", "");
-//		
-//		System.out.print(tmp);
-//		String[] tmp2= tmp.split(",");
-//		
-//		List<ProductEntity> listProductDeXuat = new ArrayList<>();
-//		for(String s:tmp2) {
-//			
-//			ProductEntity prdtmp= method.getProduct(s);
-//			if (prdtmp != null) {
-//		        listProductDeXuat.add(prdtmp);
-//		        System.out.println("\nCác sản phẩm được đề xuất: " + prdtmp.getId() + "\n");
-//		    } else {
-//		        System.out.println("\nSản phẩm với ID " + s + " không tồn tại.\n");
-//		    }
-////			System.out.println("\n Các sản phẩm được đề xuất: "+ prdtmp.getId()+"\n");
-//		}
-//
-//
-//		model.addAttribute("listDXSP", listProductDeXuat);
-//		httpSession.setAttribute("listCategory", method.getListCategory());
-//		if(httpSession.getAttribute("customerUsername")!=null) {
-//			int sum = 0;
-//		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
-//			sum = sum + c.getQuantity();
-//		}
-//		System.out.println(sum);
-//		httpSession.setAttribute("customerTotalQuantity", sum);
-//		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
-//}
-	
-//		model.addAttribute("listDXSP", listProductDeXuat);
-//		httpSession.setAttribute("listCategory", method.getListCategory());
-//		if(httpSession.getAttribute("customerUsername")!=null) {
-//			int sum = 0;
-//		for (CartDetailEntity c : method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")).getCartDetails()) {
-//			sum = sum + c.getQuantity();
-//		}
-//		System.out.println(sum);
-//		httpSession.setAttribute("customerTotalQuantity", sum);
-//		model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
-//	}
+
 		
 		return "store/product-detail";
 	}
@@ -526,11 +478,7 @@ public class GiftController {
 			}
 		}
 	}
-	
-	
-	
 
-	
 
 	@RequestMapping("/user-info")
 	public String userInfo(HttpSession httpSession, ModelMap model) {
@@ -646,46 +594,6 @@ public class GiftController {
 		return "store/order-history";
 	}
 
-	
-//	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
-//	public String submitRating(@RequestParam("orderId") String orderId,
-//								@RequestParam("customerId") String customerId,
-//	                           @RequestParam("productId") String productId,
-//	                           @RequestParam("rating") int rating,
-//	                           ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
-//	    
-//	    Methods method = new Methods(factory);
-//	    try {
-//	        // Lấy thông tin customer từ session và orderId, productId từ request
-//	        CustomerEntity customer = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername"));
-//	        
-//	     // Tạo một đối tượng RatingProductEntity từ dữ liệu nhận được
-//	        RatingProductEntity ratingEntity = new RatingProductEntity();
-//	        ratingEntity.setOrderId(orderId);    // Thiết lập orderId
-//	        ratingEntity.setCustomer(customer);  // Thiết lập khách hàng
-//	        ratingEntity.setProductId(productId);  // Thiết lập productId
-//	        ratingEntity.setRating(rating);      // Thiết lập rating
-//
-//	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
-//	        if (method.insertRating(ratingEntity)) {
-//	        	
-//	        	// Trong phương thức submitRating của controller
-//	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//	        	model.addAttribute("listOrder", listOrder);
-//	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
-//	            httpSession.setAttribute("customerUsername", customer.getUsername());
-//	            System.out.println("order-history- Rating success");
-//	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
-//	        } else {
-//	            model.addAttribute("message", "Đánh giá thất bại!");
-//	            System.out.println("order-history- Rating fail");
-//	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
-//	        }
-//	    } catch (Exception e) {
-//	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
-//	        return "store/user-info"; // Xử lý ngoại lệ nếu có
-//	    }
-//	}
 	
 	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
 	public String submitRating(@RequestParam("orderId") String orderId,
@@ -833,7 +741,8 @@ public class GiftController {
 		model.addAttribute("cartDetailsTotal", total);
 		return "store/check-out";
 	}
-
+	
+	
 	@RequestMapping(value = "/shopping-cart/check-out", method = RequestMethod.POST)
 	public String checkOut2(HttpSession httpSession, ModelMap model, @ModelAttribute("order") OrderModel order,
 			BindingResult errors, RedirectAttributes attributes) {
@@ -892,7 +801,8 @@ public class GiftController {
 				attributes.addFlashAttribute("message", "Đặt hàng thành công!");
 				String body = "<h3  style='margin: 8px 0;'>Thông tin người nhận</h3><p  style='margin: 4px 0;'>Tên: "
 						+ order.getShipName() + "</p><p style='margin: 4px 0;'>SĐT: " + order.getShipPhone()
-						+ "</p><p  style='margin: 4px 0;'>Địa chỉ: " + order.getShipAddress() + "</p>";
+						+ "</p><p  style='margin: 4px 0;'>Địa chỉ: " + order.getShipAddress() + "</p>"
+						+ "<p  style='margin: 4px 0;'>Phương thức thanh toán: Thanh toán khi nhận hàng" + "</p>";;
 				body = body + "<h3  style='margin: 8px 0;'>Thông tin đơn hàng</h3>"
 						+ "<table style='width: 400px;border: 1px solid black;"
 						+ "  border-collapse: collapse;'> <thead>" + "						<tr>"
@@ -1177,73 +1087,6 @@ public class GiftController {
 
 		return "store/user-favorite";
 	}
-
-//	@RequestMapping("/insert-to-favlist/{productId}/{redirectPath}")
-//	public String insertToFavouriteList(String customerId, @PathVariable("productId") String productId,
-//			@PathVariable("redirectPath") String redirectPath, HttpSession httpSession, RedirectAttributes attributes) {
-//		Methods method = new Methods(factory);
-//		httpSession.setAttribute("listCategory", method.getListCategory());
-//		Session session = factory.openSession();
-//		Transaction t = session.beginTransaction();
-//		FavoriteProductEntity fp = new FavoriteProductEntity();
-//		
-////		httpSession.setAttribute("customerId", customerId);
-//		
-//		if (method.favItemIsExit(productId, httpSession)) {
-//			if (method.deleteProductFromFavourite(productId, httpSession)) {
-//				attributes.addFlashAttribute("message", "Đã xóa khỏi danh sách yêu thích");
-//				System.out.println("remove from fav list successful!-------------");
-//			}
-//		} else {
-//			fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-//			fp.setProduct(method.getProduct(productId));
-//			
-//			
-//			// Random Rating
-//			Random random = new Random();
-//			int minRating = 1;
-//			int maxRating = 5;
-//			int randomRating = random.nextInt(maxRating - minRating + 1) + minRating;
-//			fp.setRating(randomRating);
-//			
-//			try {
-//				session.save(fp);
-//				
-//				// lưu đánh giá
-//
-//				fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-//				CustomerEntity customer = fp.getCustomer();
-//				
-//				String list = customer.getId() + "," + productId + "," + fp.getRating()  ;
-////				String tmp = saveRatingRecord(list);
-//				String tmp = "";
-//				
-//				// luu vao database cho nay
-//
-//				System.out.println("get danh gia");
-//				System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + fp.getRating());
-//				System.out.println(" PHUC "+" "+tmp);
-//				// lưu đánh giá
-//				
-//				t.commit();
-//				System.out.println("Insert to fav list successful!-------------");
-//				attributes.addFlashAttribute("message", "Đã thêm vào danh sách yêu thích");
-//				
-//
-//
-//			} catch (Exception ex) {
-//				t.rollback();
-//				System.out.println("--------Insert to fav list unsuccessful!");
-//			} finally {
-//
-//				session.close();
-//			}
-//		}
-//		
-//		
-//		return returnRedirectControl(redirectPath);
-////			return "redirect:/store/user-info/favorite";
-//	}
 	
 	
 	// Theem vaof danh sach yeu thich
@@ -1296,355 +1139,6 @@ public class GiftController {
 		Matcher matcher = VALID_VI_PHONE_NUMBER_REGEX.matcher(phoneNumber);
 		return matcher.find();
 	}
-//	public boolean updateCustomerDetail(CustomerEntity customer, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "UPDATE CustomerEntity c SET c.firstname=:firstname, c.lastname=:lastname,"
-//				+ "c.phone=:phone, c.address=:address, c.email=:email   WHERE c.id=:id";
-//		Query query = session.createQuery(hql).setParameter("id",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("firstname", customer.getFirstname());
-//		query.setParameter("lastname", customer.getLastname());
-//		query.setParameter("phone", customer.getPhone());
-//		query.setParameter("address", customer.getAddress());
-//		query.setParameter("email", customer.getEmail());
-//		return query.executeUpdate() > 0;
-//	}
-//
-//	public boolean updateCustomerPassword(CustomerEntity customer, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "UPDATE CustomerEntity c SET c.password=:password WHERE c.id=:id";
-//		Query query = session.createQuery(hql).setParameter("id",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("password", customer.getPassword());
-//		return query.executeUpdate() > 0;
-//	}
-//
-//	public boolean updateProductQuantityFromCartDetail(String productId, String quantity, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "UPDATE CartDetailEntity c SET c.quantity=:quantity WHERE c.id.customer_id=:customerId and c.id.product_id=:productId";
-//		Query query = session.createQuery(hql).setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", productId);
-//		query.setParameter("quantity", Integer.parseInt(quantity));
-//		return query.executeUpdate() > 0;
-//	}
-//
-//	public boolean updateProductQuantity(String productId, int quantity) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "UPDATE ProductEntity p SET p.quantity=:quantity WHERE p.id=:productId";
-//		Query query = session.createQuery(hql);
-//		query.setParameter("productId", productId);
-//		query.setParameter("quantity", quantity);
-//		return query.executeUpdate() > 0;
-//	}
-//
-//	public boolean deleteProductFromCartDetail(String productId, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "DELETE FROM CartDetailEntity c WHERE c.id.customer_id=:customerId and c.id.product_id=:productId";
-//		Query query = session.createQuery(hql).setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", productId);
-//
-//		return query.executeUpdate() > 0;
-//	}
-//
-//	public List<CartDetailEntity> getListCartDetail(String customerId) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM CartDetailEntity c WHERE c.customer.id =:customerId";
-//		Query query = session.createQuery(hql);
-//
-//		List<CartDetailEntity> list = query.setParameter("customerId", customerId).list();
-//		return list;
-//	}
-//
-//	public String getCustomerIdByUserName(String userName) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT id FROM CustomerEntity c WHERE c.username =:userName";
-//		Query query = session.createQuery(hql);
-//		String customerId = (String) query.setParameter("userName", userName).uniqueResult();
-//		return customerId;
-//	}
-//
-//	public CustomerEntity getCustomerByUsername(String userName) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM CustomerEntity c WHERE c.username =:userName";
-//		Query query = session.createQuery(hql);
-//		CustomerEntity customer = (CustomerEntity) query.setParameter("userName", userName).uniqueResult();
-//		return customer;
-//	}
-//
-//	public List<ProductEntity> getListProduct() {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity";
-//		Query query = session.createQuery(hql);
-//		List<ProductEntity> list = query.list();
-//		return list;
-//	}
-//
-//	public boolean checkOutHibernate(OrderEntity order, List<CartDetailEntity> listCartDetail) {
-//		Session session = factory.openSession();
-//		Transaction t = session.beginTransaction();
-//		List<ProductEntity> listProduct = this.getListProduct();
-//
-//		List<ProductEntity> listProductToBeUpdate = new ArrayList<ProductEntity>();
-//
-//		for (ProductEntity pe : listProduct) {
-//			for (CartDetailEntity cde : listCartDetail) {
-//				if (cde.getProduct().getId().trim().equals(pe.getId())) {
-////					System.out.println(pe.getQuantity() +"old quan: "+ pe.getName());
-//					pe.setQuantity(pe.getQuantity() - cde.getQuantity());// new quantity after update
-////					System.out.println(pe.getQuantity() +"new quan: "+ pe.getName());
-//					listProductToBeUpdate.add(pe);
-//				}
-//			}
-//		}
-//		List<OrderDetailEntity> listODE = new ArrayList<OrderDetailEntity>();
-//		for (CartDetailEntity cartDetailEntity : listCartDetail) {
-//			OrderDetailEntity ode = new OrderDetailEntity(order.getId(), cartDetailEntity.getProduct().getId());
-//			ode.setQuantity(cartDetailEntity.getQuantity());
-//			listODE.add(ode);
-//		}
-//		boolean updateFlag = false;
-//		try {
-//			session.save(order);
-//			for (CartDetailEntity cartDetailEntity : listCartDetail) {
-//				session.delete(cartDetailEntity);
-//			}
-//			for (OrderDetailEntity ode : listODE) {
-//				session.save(ode);
-//			}
-//
-//			t.commit();
-//		} catch (Exception ex) {
-//			t.rollback();
-//			return false;
-//		} finally {
-//			session.close();
-//			updateFlag = true;
-//		}
-//		if (updateFlag == true) {
-//			for (ProductEntity p : listProductToBeUpdate) {
-//				if (!updateProductQuantity(p.getId(), p.getQuantity())) {
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-//
-//	public boolean cartItemIsExit(String product_id, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT c.id.product_id FROM CartDetailEntity c WHERE c.id.customer_id =:customerId and c.id.product_id=:productId";
-//		Query query = session.createQuery(hql);
-//		query.setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", product_id);
-//		String productId = (String) query.uniqueResult();
-//		return product_id.equals(productId);
-//	}
-//
-//	public int getQuantityOfCartItem(String product_id, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT c.quantity FROM CartDetailEntity c WHERE c.id.customer_id =:customerId and c.id.product_id=:productId";
-//		Query query = session.createQuery(hql);
-//		query.setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", product_id);
-//		int quantity = (int) query.uniqueResult();
-//		return quantity;
-//	}
-//
-//	public boolean isProductOutOfStock(String product_id) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT p.quantity FROM ProductEntity p WHERE p.id =:productId";
-//		Query query = session.createQuery(hql);
-//		int product = (int) query.setParameter("productId", product_id).uniqueResult();
-//		return product <= 0;
-//	}
-//
-//	public boolean isCartItemMaximumAmountOfProduct(String product_id, HttpSession httpSession) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT c.quantity FROM CartDetailEntity c WHERE c.id.customer_id =:customerId and c.id.product_id=:productId";
-//		Query query = session.createQuery(hql);
-//		query.setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", product_id);
-//		int quantityOfCart = (int) query.uniqueResult();
-//		System.out.println("quantity from cart: " + quantityOfCart);
-//		hql = "SELECT c.product.quantity FROM CartDetailEntity c WHERE c.id.customer_id =:customerId and c.id.product_id=:productId";
-//		query = session.createQuery(hql);
-//		query.setParameter("customerId",
-//				this.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-//		query.setParameter("productId", product_id);
-//		int quantityOfProduct = (int) query.uniqueResult();
-//		System.out.println("quantity from product: " + quantityOfProduct);
-//		return quantityOfCart >= quantityOfProduct;
-//	}
-//
-//	public ProductEntity getProduct(String productId) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity p WHERE p.id =:productId";
-//		Query query = session.createQuery(hql);
-//
-//		ProductEntity product = (ProductEntity) query.setParameter("productId", productId).uniqueResult();
-//		return product;
-//	}
-//
-//	public List<ProductEntity> getListProductBycategory(String categoryId) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity p WHERE p.category.id=:categoryId";
-//		Query query = session.createQuery(hql);
-//
-//		List<ProductEntity> list = query.setParameter("categoryId", categoryId).list();
-//		return list;
-//	}
-//
-//	public boolean insertCustomer(CustomerEntity customer) {
-//		Session session = factory.openSession();
-//		Transaction t = session.beginTransaction();
-//		try {
-//			session.save(customer);
-//			t.commit();
-//			System.out.println("Insert successful!");
-//
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//			t.rollback();
-//			System.out.println("Insert unsuccessful!");
-//			return false;
-//		} finally {
-//			session.close();
-//		}
-//		return true;
-//	}
-//
-//	public boolean isCustomerWithUsernameExit(String username) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM CustomerEntity c WHERE c.username=:username";
-//		Query query = session.createQuery(hql);
-//
-//		CustomerEntity customer = (CustomerEntity) query.setParameter("username", username).uniqueResult();
-//		return customer != null;
-//	}
-//
-//	public String getPasswordOfCustomerWithUsername(String username) {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT c.password FROM CustomerEntity c WHERE c.username=:username";
-//		Query query = session.createQuery(hql);
-//		String password = (String) query.setParameter("username", username).uniqueResult();
-//		return password;
-//	}
-
-//	public String createTheNextCustomerId() {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT c.id FROM CustomerEntity c WHERE c.id=(SELECT MAX(cc.id) FROM CustomerEntity cc)";
-//		Query query = session.createQuery(hql);
-//
-//		String id = (String) query.uniqueResult();
-//		if (id == null || id.equals("")) {
-//			return "U0001";
-//		}
-//		int x = Integer.parseInt(id.substring(1)) + 1;
-//		String base = "U0000";
-//		String base2 = base.substring(0, base.length() - String.valueOf(x).length());
-//		String newId = base2 + String.valueOf(x);
-//		return newId;
-//	}
-//
-//	public String createTheNextOrderId() {
-//		Session session = factory.getCurrentSession();
-//		String hql = "SELECT o.id FROM OrderEntity o WHERE o.id=(SELECT MAX(oo.id) FROM OrderEntity oo)";
-//		Query query = session.createQuery(hql);
-//
-//		String id = (String) query.uniqueResult();
-//		if (id == null || id.equals("")) {
-//			return "O000000001";
-//		}
-//		int x = Integer.parseInt(id.substring(1)) + 1;
-//		String base = "O000000000";
-//		String base2 = base.substring(0, base.length() - String.valueOf(x).length());
-//		String newId = base2 + String.valueOf(x);
-//		return newId;
-//	}
-//
-//	public List<CategoryEntity> getListCategory() {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM CategoryEntity";
-//		Query query = session.createQuery(hql);
-//		List<CategoryEntity> list = query.list();
-//		return list;
-//	}
-//
-//	public List<ProductEntity> getTop16RecentProduct() {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity p ORDER BY p.dateAdded DESC";
-//		Query query = session.createQuery(hql);
-//		List<ProductEntity> list = query.setMaxResults(16).list();
-//		return list;
-//	}
-//
-//	public List<OrderEntity> getCustomerOrder(String customerId) {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM OrderEntity o WHERE o.customerId=:customerId ORDER BY o.orderDate DESC";
-//		Query query = session.createQuery(hql).setParameter("customerId", customerId);
-//		List<OrderEntity> list = query.list();
-//		return list;
-//	}
-//
-//	public List<ProductEntity> getAllProducts() {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity p ORDER BY p.dateAdded DESC";
-//		Query query = session.createQuery(hql);
-//		List<ProductEntity> list = query.list();
-//		return list;
-//	}
-//
-//	public List<ProductEntity> searchForProduct(String keyword) {
-//		/* System.out.println("getListCartDetail"); */
-//		Session session = factory.getCurrentSession();
-//		String hql = "FROM ProductEntity p WHERE p.name LIKE :keyword OR p.category.name LIKE:keyword ORDER BY p.dateAdded DESC";
-//		Query query = session.createQuery(hql).setParameter("keyword", "%" + keyword + "%");
-//		List<ProductEntity> list = query.setParameter("keyword", "%" + keyword + "%").list();
-//		return list;
-//	}
-	// Theem vaof danh sach yeu thich
-//	@RequestMapping("/insert-to-favlist/{productId}")
-//	public String insertToFavouriteList(String customerId, @PathVariable("productId") String productId, HttpSession httpSession,
-//			RedirectAttributes attributes) {
-//		Methods method = new Methods(factory);
-//		httpSession.setAttribute("listCategory", method.getListCategory());
-//		Session session = factory.openSession();
-//		Transaction t = session.beginTransaction();
-//		FavoriteProductEntity fp = new FavoriteProductEntity();
-//		if (method.favItemIsExit(productId, httpSession)) {
-//			if(method.deleteProductFromFavourite(productId, httpSession)) {
-//				attributes.addFlashAttribute("message", "Đã xóa khỏi danh sách yêu thích");
-//				System.out.println("remove from fav list successful!-------------");
-//			}
-//		} else {
-//			fp.setCustomer(method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-//			fp.setProduct(method.getProduct(productId));
-//			try {
-//				session.save(fp);
-//				t.commit();
-//				System.out.println("Insert to fav list successful!-------------");
-//				attributes.addFlashAttribute("message", "Đã thêm vào danh sách yêu thích");
-//
-//			} catch (Exception ex) {
-//				t.rollback();
-//				System.out.println("--------Insert to fav list unsuccessful!");
-//			} finally {
-//				session.close();
-//			}
-//		}
-//
-//		return "redirect:/store/user-info/favorite";
-//	}
 
 	@RequestMapping("/filter")
     public String filterProducts(ModelMap model,
@@ -1678,27 +1172,5 @@ public class GiftController {
         return "store/filter-products";
     }
 	
-//	@RequestMapping(value = "/submit-rating", method = RequestMethod.POST)
-//	public String submitRating(@RequestParam("customerId") String customerId, 
-//	                           @RequestParam("orderId") String orderId,
-//	                           @RequestParam("productId") String productId,
-//	                           @RequestParam("rating") int rating) {
-//	    try {
-//	        Methods.saveRating(customerId, orderId, productId, rating);
-//	        return "Đã gửi đánh giá thành công.";
-//	    } catch (Exception e) {
-//	        return "Lỗi khi gửi đánh giá: " + e.getMessage();
-//	    }
-//	}
-
-//    @RequestMapping(value = "/user-info/rating-history")
-//    public String ratingHistory(HttpSession httpSession, ModelMap model) {
-//        Methods method = new Methods(factory);
-//        httpSession.setAttribute("listCategory", method.getListCategory());
-//        String customerId = method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"));
-//        model.addAttribute("listRatings", method.getCustomerRatings(customerId));
-//        model.addAttribute("customerEntity", method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-//        return "store/rating-history";
-//    }
 	
 }
