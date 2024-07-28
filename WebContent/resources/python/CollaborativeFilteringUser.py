@@ -104,7 +104,7 @@ mae_score = mae(predictions)
 #  top-N recommendations for a user
 # user_id = 'U0013'
 user_id = str(sys.argv[1])
-n = 2  # Number of recommendations
+n = 4  # Number of recommendations
 
 print(f"\nRecommendations for User {user_id}:")
 
