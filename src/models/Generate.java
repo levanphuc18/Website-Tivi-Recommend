@@ -6,6 +6,7 @@ import java.util.Random;
 import entities.AdminEntity;
 import entities.CategoryEntity;
 import entities.ConfigEntity;
+import entities.DisscountEntity;
 import entities.InvoiceEntity;
 import entities.ProductEntity;
 import entities.SupplierEntity;
@@ -80,6 +81,14 @@ public class Generate {
 			}
 			return null;
 		}
+		
+		public static DisscountEntity searchDisscount(List<DisscountEntity> disscounts, String id) {
+			for (DisscountEntity disscount : disscounts) {
+				if (disscount.getId().equals(id))
+					return disscount;
+			}
+			return null;
+		}
 
 	public static String generateCategoryId(List<CategoryEntity> categories) {
 		String generatedString = null;
@@ -105,6 +114,15 @@ public class Generate {
 		do {
 			generatedString = "S" + generateId(4);
 		} while (searchSupplier(suppliers, generatedString) != null);
+
+		return generatedString;
+	}
+	
+	public static String generateDisscountId(List<DisscountEntity> disscounts) {
+		String generatedString = null;
+		do {
+			generatedString = "D" + generateId(4);
+		} while (searchDisscount(disscounts, generatedString) != null);
 
 		return generatedString;
 	}

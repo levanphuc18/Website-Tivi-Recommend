@@ -65,6 +65,10 @@ public class ProductEntity {
 	@ManyToOne
 	@JoinColumn(name= "config_id")
 	private ConfigEntity config;
+	
+	@ManyToOne
+	@JoinColumn(name= "disscount_id")
+	private DisscountEntity disscount;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<CartDetailEntity> cartDetails;
@@ -160,6 +164,16 @@ public class ProductEntity {
 
 	public void setConfig(ConfigEntity config) {
 		this.config = config;
+	}
+
+	
+	
+	public DisscountEntity getDisscount() {
+		return disscount;
+	}
+
+	public void setDisscount(DisscountEntity disscount) {
+		this.disscount = disscount;
 	}
 
 	public List<ImageEntity> getImages() {

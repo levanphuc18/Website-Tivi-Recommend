@@ -10,6 +10,7 @@ import org.springframework.web.bind.ServletRequestUtils;
 import entities.CategoryEntity;
 import entities.ConfigEntity;
 import entities.CustomerEntity;
+import entities.DisscountEntity;
 import entities.InvoiceDetailEntity;
 import entities.InvoiceEntity;
 import entities.OrderDetailEntity;
@@ -52,6 +53,17 @@ public class Pagination {
 		pagedListHolder.setPageSize(pageSize);
 		return pagedListHolder;
 	}
+	
+	// CONFIG PAGINATION
+		public static PagedListHolder disscountPagination(HttpServletRequest request, List<DisscountEntity> disscounts,
+				int maxLinkedPages, int pageSize) {
+			PagedListHolder pagedListHolder = new PagedListHolder(disscounts);
+			int page = ServletRequestUtils.getIntParameter(request, "p", 0);
+			pagedListHolder.setPage(page);
+			pagedListHolder.setMaxLinkedPages(maxLinkedPages);
+			pagedListHolder.setPageSize(pageSize);
+			return pagedListHolder;
+		}
 	
 	// SUPPLIER PAGINATION
 	public static PagedListHolder supplierPagination(HttpServletRequest request, List<SupplierEntity> suppliers,
