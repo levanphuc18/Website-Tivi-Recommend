@@ -45,11 +45,16 @@
 					class="w-full px-4 py-2 font-bold bg-blue-700 hover:bg-blue-500 transition-colors text-white rounded-md mb-3">
 					<i class="fab fa-facebook-f mr-1"></i>Đăng nhập bằng Facebook
 				</button>
-				<button
-					class="w-full px-4 py-2 font-bold bg-red-700 hover:bg-red-500 transition-colors text-white rounded-md">
-					<i class="fab fa-google mr-1"></i>Đăng nhập bằng Google
-				</button>
 			</f:form>
+			
+			<form action="store/google-sign-in" method="get"
+				class="w-full">
+				<a href="${applicationScope.signInPageWithGoogle}"
+					class="w-full px-4 py-2 font-bold bg-red-700 hover:bg-red-500 transition-colors text-white rounded-md flex items-center justify-center">
+					<i class="fab fa-google mr-1"></i>Đăng nhập bằng Google
+				</a>
+			</form>
+
 
 		</div>
 
@@ -58,7 +63,8 @@
 
 	<!-- <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script> -->
 	<!-- <script src="./assets/js/main.js"></script> -->
-	<script src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
+	<script
+		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
 	<!-- <script src="./assets/js/sign-up.js"></script> -->
 	<script src="<c:url value='/resources/store/assets/js/sign-up.js'/>"></script>

@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.BufferedReader;
 
+
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,16 +15,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
+import org.apache.http.impl.auth.GGSSchemeBase;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,8 +36,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.apache.http.client.fluent.Request;
 
 import entities.CartDetailEntity;
 import entities.CustomerEntity;
@@ -45,11 +52,14 @@ import models.ChangePasswordModel;
 import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
 import models.CustomerValidateModel;
+import constant.CustomerGoogleDto;
+import constant.GoogleLogin;
 import models.Mailer;
 
 import models.OrderModel;
 import models.RatingModel;
 import vnpay.Config;
+
 
 @Transactional
 @Controller
@@ -227,18 +237,6 @@ public class GiftController {
 		return "store/category-products";
 	}
 
-	@RequestMapping(value = "/sign-in")
-	public String signIn(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
-		Methods method = new Methods(factory);
-
-		httpSession.setAttribute("listCategory", method.getListCategory());
-		model.addAttribute("account", new CustomerLoginAccountModel());
-		if ((httpSession.getAttribute("customerUsername") != null)) {
-			attributes.addFlashAttribute("message", "Vui lòng đăng xuất nếu muốn đăng nhập lại");
-			return returnRedirectControl("index");
-		}
-		return "store/sign-in";
-	}
 
 	@RequestMapping(value = "/forgot-password")
 	public String forgotPassword(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
@@ -334,10 +332,102 @@ public class GiftController {
 		httpSession.removeAttribute("customerUsername");
 		return "redirect:/";
 	}
+	
+	
+	
+//	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
+//	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
+//	    System.out.println("Authorization Code: " + code);
+//	    GoogleLogin gg = new GoogleLogin();
+//	    try {
+//	        String accessToken = gg.getToken(code);
+//	        CustomerEntity customer = gg.getCustomerInfo(accessToken);
+//	        System.out.println("Access Token: " + accessToken);
+//	        System.out.println("Customer Info: " + customer.getEmail());
+//
+//
+//	        return "redirect:/"; // Chuyển hướng đến trang chính
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        System.out.println("loi login google \n");
+//	        model.addAttribute("error", "Google sign-in failed");
+//	        return "store/sign-in"; // Quay lại trang đăng nhập với thông báo lỗi
+//	    }
+//	}
+	
+	
+	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
+	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
+//	    System.out.println("Authorization Code: " + code);
+	    GoogleLogin gg = new GoogleLogin();
+	    try {
+	        String accessToken = gg.getToken(code);
+	        CustomerGoogleDto customer = gg.getCustomerInfo(accessToken);
+//	        System.out.println("Access Token: " + accessToken);
+//	        System.out.println("Customer Info: " + customer.getEmail());
+//	        System.out.println("Customer fn: " + customer.getGiven_name());
+//	        System.out.println("Customer ln: " + customer.getFamily_name());
+	        Methods method = new Methods(factory);
+	        String email = customer.getEmail().trim();
+	        
+	        // Kiểm tra xem người dùng đã tồn tại chưa
+	        if (method.isCustomerWithUsernameExit(email) || method.isAdminWithUsernameExit(email)) {
+	        	request.getSession().setAttribute("customerUsername", email);
+	            // Nếu đã tồn tại, chuyển hướng đến trang chính
+	            return "redirect:/";
+	        } else {
+	            // Nếu chưa tồn tại, tạo tài khoản mới
+	            CustomerEntity newCustomer = new CustomerEntity();
+	            newCustomer.setId(method.createTheNextCustomerId().trim());
+	            newCustomer.setUsername(email);
+	            newCustomer.setEmail(email);
+	            newCustomer.setPassword("113"); // Sinh mật khẩu ngẫu nhiên
+	            newCustomer.setFirstname(customer.getGiven_name()); // Hoặc đặt tên từ thông tin khách hàng
+	            newCustomer.setLastname(customer.getFamily_name()); // Hoặc đặt tên từ thông tin khách hàng
+	            
+	            // Mã hóa mật khẩu
+	            String paString= newCustomer.getPassword();
+	            String hashedPassword = encryption.hashPassword(paString);
+	            newCustomer.setPassword(hashedPassword);
+
+	            // Xử lý đăng ký tài khoản mới
+	            if (method.insertCustomer(newCustomer)) {
+	                request.getSession().setAttribute("customerUsername", newCustomer.getUsername());
+	                System.out.println("Thêm thành công");
+	                return "redirect:/";
+	            } else {
+	                model.addAttribute("error", "Đăng ký thất bại!");
+	                System.out.println("Thêm thất bại");
+	                return "store/sign-in";
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        System.out.println("Lỗi login Google \n");
+	        model.addAttribute("error", "Google sign-in failed");
+	        return "store/sign-in";
+	    }
+	}
+
+	@RequestMapping(value = "/sign-in")
+	public String signIn(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
+		System.out.println("Authorization Code: 1 ");
+		Methods method = new Methods(factory);
+
+		httpSession.setAttribute("listCategory", method.getListCategory());
+		model.addAttribute("account", new CustomerLoginAccountModel());
+		if ((httpSession.getAttribute("customerUsername") != null)) {
+			attributes.addFlashAttribute("message", "Vui lòng đăng xuất nếu muốn đăng nhập lại");
+			return returnRedirectControl("index");
+		}
+		return "store/sign-in";
+	}
 
 	@RequestMapping(value = "/sign-in", method = RequestMethod.POST)
 	public String signIn(@ModelAttribute("account") CustomerLoginAccountModel account, ModelMap model,
-			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
+			BindingResult errors, HttpSession httpSession,HttpServletRequest request,
+			HttpServletResponse response, RedirectAttributes attributes) throws NoSuchAlgorithmException {
+		System.out.println("Authorization Code: 2");
 		Methods method = new Methods(factory);
 		
 		// thực tập md5
@@ -366,7 +456,7 @@ public class GiftController {
 			for (CartDetailEntity c : method.getCustomerByUsername(account.getUsername()).getCartDetails()) {
 				sum = sum + c.getQuantity();
 			}
-			System.out.println(sum);
+
 			httpSession.setAttribute("customerTotalQuantity", sum);
 			attributes.addFlashAttribute("message", "Đăng nhập thành công!");
 			return "redirect:/";
@@ -427,18 +517,6 @@ public class GiftController {
 		} else if (!validateEmail(customer.getEmail().trim())) {
 			errors.rejectValue("email", "customer", "Email không đúng định dạng!");
 		}
-//		if (customer.getCity().trim().equals("0")) {
-//			errors.rejectValue("city", "customer", "Vui lòng chọn Tỉnh/ Thành phố!");
-//		}
-//		if (customer.getDistrict().trim().equals("0")) {
-//			errors.rejectValue("district", "customer", "Vui lòng chọn Quận/ Huyện!");
-//		}
-//		if (customer.getCommune().trim().equals("0")) {
-//			errors.rejectValue("commune", "customer", "Vui lòng chọn Xã/ Phường!");
-//		}
-//		if (customer.getSpecificAddress().trim().length() == 0) {
-//			errors.rejectValue("specificAddress", "customer", "Vui lòng nhập địa chỉ chi tiết!");
-//		}
 		if (customer.getFullAddress().trim().length() == 0) {
 			errors.rejectValue("fullAddress", "customer", "Vui lòng nhập địa chỉ!");
 		}

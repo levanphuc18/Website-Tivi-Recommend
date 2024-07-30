@@ -121,7 +121,7 @@ public class Methods {
 			// read any errors from the attempted command
 			System.out.println("Here is the standard error of the command (if any):\n");
 			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
+				System.out.println(s +"\n");
 			}
 
 			// System.exit(0);
@@ -133,7 +133,10 @@ public class Methods {
 		return str;
 
 	}
+	
 	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	
+	
 	
 	public String createTheNextCustomerId() {
 		Session session = factory.getCurrentSession();
@@ -722,6 +725,5 @@ public class Methods {
 			}
 			return true;
 		}
-	    
 
 }
