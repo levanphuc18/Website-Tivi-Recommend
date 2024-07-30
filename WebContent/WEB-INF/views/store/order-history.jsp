@@ -234,6 +234,7 @@
 																	response) {
 																console
 																		.log("Đã gửi đánh giá thành công.");
+																window.location.href = "/LightStudio/store/user-info/order-history"
 																console
 																		.log(
 																				"Order ID:",

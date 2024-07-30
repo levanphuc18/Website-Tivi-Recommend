@@ -75,6 +75,17 @@ public class GlobalInterceptor extends HandlerInterceptorAdapter {
 		application.setAttribute("orderHistoryPage", "store/user-info/order-history");
 		application.setAttribute("userFavoritePage", "store/user-info/favorite");
 		application.setAttribute("forgotPassPage", "store/forgot-password");
+		
+		// Login google
+		application.setAttribute("signInPageWithGoogle", "https://accounts.google.com/o/oauth2/auth?scope=email profile openid\r\n"
+				+ "\r\n"
+				+ "&redirect_uri=http://localhost:8080/LightStudio/store/google-sign-in\r\n"
+				+ "\r\n"
+				+ "&response_type=code\r\n"
+				+ "\r\n"
+				+ "&client_id=684649681695-rh9cqmap4qhv7sqcq1f6eug7862mp4nc.apps.googleusercontent.com\r\n"
+				+ "\r\n"
+				+ "&approval_prompt=force");
 		return true;
 
 	}
