@@ -9,6 +9,25 @@
 <%@include file="/WEB-INF/views/store/include/store-head.jsp"%>
 </head>
 <style>
+.star {
+        font-size: 0.8em;
+        color: lightgray;
+        cursor: pointer;
+        display: inline-block;
+    }
+    
+    .star.filled {
+        color: gold;
+    }
+    
+    .star.half-filled::before {
+        content: '★';
+        color: gold;
+        position: absolute;
+        overflow: hidden;
+        width: 50%;
+    }
+
 .form-container {
 	display: flex;
 	flex-direction: column;
@@ -96,13 +115,14 @@
 					<div class="ml-5 flex-1 detail__desc">
 						<div class="flex justify-between">
 							<h3 class="text-3xl font-bold mb-2">${product.name}
-								<ul class="list-inline product-ratings">
-									<li><i class="rating fa fa-star"></i></li>
-									<li><i class="rating fa fa-star"></i></li>
-									<li><i class="rating fa fa-star"></i></li>
-									<li><i class="rating fa fa-star"></i></li>
-									<li><i class="rating fa fa-star"></i></li>
-								</ul>
+								<div class="product-ratings"
+									data-current-rating="${reviewInfo.averageRating}">
+									<span class="star" data-value="1">★</span> 
+									<span class="star" data-value="2">★</span> 
+									<span class="star" data-value="3">★</span>
+									<span class="star" data-value="4">★</span> 
+									<span class="star" data-value="5">★</span>
+								</div>
 							</h3>
 							<a
 								href="store/insert-to-favlist/${product.id}/product-detailseperator${product.id}">
@@ -121,9 +141,10 @@
 										class="fa text-2xl fa-heart text-white hover:text-indigo-500 transition-colors"></i> -->
 							</a>
 						</div>
-						<%-- <h3 class="text-3xl font-bold mb-2">${product.name}</h3> --%>
+
 						<div class="flex justify-between">
-							<h6 class="mb-2 text-gray-500">Mau: ${product.id}</h6>
+							<%-- <h6 class="mb-2 text-gray-500">Mã SP: ${product.id}</h6> --%>
+							<h6 class="mb-2 text-gray-500">Lượt đánh giá: ${reviewsCount}</h6>
 
 							<div class="flex">
 								<h6 class="mb-2 text-gray-500 mr-4">Tồn kho:
@@ -380,6 +401,27 @@
 	<!-- <script src="./assets/js/product-detail.js"></script> -->
 	<script
 		src="<c:url value='/resources/store/assets/js/product-detail.js'/>"></script>
+		
+		<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingElements = document.querySelectorAll('.product-ratings');
+        
+        ratingElements.forEach(function(ratingElement) {
+            const currentRating = parseFloat(ratingElement.getAttribute('data-current-rating'));
+            const stars = ratingElement.querySelectorAll('.star');
+            
+            stars.forEach(function(star) {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                if (currentRating >= starValue) {
+                    star.classList.add('filled');
+                } else if (currentRating >= starValue - 0.5) {
+                    star.classList.add('half-filled');
+                }
+            });
+        });
+    });
+</script>
+		
 </body>
 
 </html>

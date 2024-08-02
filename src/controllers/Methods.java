@@ -13,6 +13,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import com.mchange.v2.codegen.bean.PropsToStringGeneratorExtension;
+
 import entities.AccountEntity;
 import entities.AdminEntity;
 import entities.CartDetailEntity;
@@ -23,7 +25,7 @@ import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
 import entities.RatingProductEntity;
-import models.RatingModel;
+
 
 
 public class Methods {
@@ -725,5 +727,113 @@ public class Methods {
 			}
 			return true;
 		}
+	    
+	    public RatingProductEntity getRatingByOrderIdAndProductId(String orderId, String productId, String customerId) {
+	        RatingProductEntity rating = null;
+	        try {
+	            // Sử dụng Session hoặc EntityManager để thực hiện truy vấn
+	            Session session = factory.openSession();
+	            String hql = "FROM RatingProductEntity WHERE orderId = :orderId AND productId = :productId AND customer.id = :customerId";
+	            Query query = session.createQuery(hql);
+	            query.setParameter("orderId", orderId);
+	            query.setParameter("productId", productId);
+	            query.setParameter("customerId", customerId);
+	            rating = (RatingProductEntity) query.uniqueResult();
+	            session.close();
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return rating;
+	    }
+	    
+	    public Integer getRatingByProductAndOrder(String productId, String orderId) {
+	        Integer rating = null;
+	        try {
+	            Session session = factory.openSession();
+	            String hql = "SELECT rating FROM RatingProductEntity WHERE productId = :productId AND orderId = :orderId";
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId);
+	            query.setParameter("orderId", orderId);
+	            Object result = query.uniqueResult();
+	            if (result != null) {
+	                rating = (Integer) result;
+	            }
+	            session.close();
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return rating;
+	    }
+
+	    public boolean updateRating(RatingProductEntity existingRating, int newRating) {
+	        boolean updated = false;
+	        Transaction transaction = null;
+	        try {
+	            // Mở phiên làm việc với cơ sở dữ liệu
+	            Session session = factory.openSession();
+	            transaction = session.beginTransaction();
+	            
+	            // Cập nhật rating cho đối tượng đã tồn tại
+	            existingRating.setRating(newRating);
+	            session.update(existingRating);
+	            transaction.commit();
+	            updated = true;
+	            
+	            session.close();
+	        } catch (Exception e) {
+	            if (transaction != null) {
+	                transaction.rollback();
+	            }
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return updated;
+	    }
+	    
+//	    // đếm số lượng đánh giá của sản phẩm
+	    public int getProductReviewsCount(String productId) {
+	        int reviewCount = 0;
+	        Session session = null;
+	        try {
+	            session = factory.openSession(); // Mở phiên làm việc với cơ sở dữ liệu
+	            String hql = "SELECT COUNT(*) FROM RatingProductEntity WHERE productId = :productId"; // Câu lệnh HQL để đếm số lượng đánh giá theo productId
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId); // Gán tham số productId vào câu lệnh
+	            Long countResult = (Long) query.uniqueResult(); // Thực thi truy vấn và lấy kết quả
+	            if (countResult != null) {
+	                reviewCount = countResult.intValue(); // Chuyển đổi Long thành int
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+	        } finally {
+	            if (session != null) {
+	                session.close(); // Đóng phiên làm việc với cơ sở dữ liệu
+	            }
+	        }
+	        return reviewCount; // Trả về số lượng đánh giá
+	    }
+	    
+	    // Tính tổng điểm đánh giá
+	    public int getTotalRating(String productId) {
+	        long totalRating = 0;
+	        Session session = null;
+	        try {
+	            session = factory.openSession(); // Mở phiên làm việc với cơ sở dữ liệu
+	            String hql = "SELECT SUM(rating) FROM RatingProductEntity WHERE productId = :productId"; // Câu lệnh HQL để tính tổng điểm đánh giá theo productId
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId); // Gán tham số productId vào câu lệnh
+	            Long sumResult = (Long) query.uniqueResult(); // Thực thi truy vấn và lấy kết quả
+	            if (sumResult != null) {
+	                totalRating = sumResult; // Lưu tổng điểm đánh giá
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+	        } finally {
+	            if (session != null) {
+	                session.close(); // Đóng phiên làm việc với cơ sở dữ liệu
+	            }
+	        }
+	        return (int) totalRating; // Trả về tổng điểm đánh giá
+	    }
+
 
 }

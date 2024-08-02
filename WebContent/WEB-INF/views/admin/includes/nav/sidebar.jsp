@@ -214,6 +214,37 @@
                     </ul>
                 </div>
             </li>
+            
+            <!-- Disscount Manager -->
+            <li class="nav-item">
+                <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#subdisscount-pages">
+                    <span>
+                        <span class="sidebar-icon">
+                            <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </span>
+                        <span class="sidebar-text">Khuyến mãi</span>
+                    </span>
+                    <span class="link-arrow">
+                        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                </span>
+                <div class="multi-level collapse" role="list" id="subdisscount-pages" aria-expanded="false">
+                    <ul class="flex-column nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="${applicationScope.disscountPage}">
+                                <span class="sidebar-text">Quản Lý</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="${applicationScope.addDisscountPage}">
+                                <span class="sidebar-text">Thêm khuyến mãi</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
             <!-- Product Manager -->
             <li class="nav-item">

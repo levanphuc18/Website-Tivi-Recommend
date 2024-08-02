@@ -18,7 +18,7 @@
 	<bean id="dataSource" 
 	    	class="org.springframework.jdbc.datasource.DriverManagerDataSource"
 			p:driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-			p:url="jdbc:sqlserver://LEVANPHUC:1433; Database=StoreTiviS"
+			p:url="jdbc:sqlserver://LEVANPHUC:1433; Database=StoreTivi"
 			p:username="sa"
 			p:password="sa">
 	</bean>
@@ -31,6 +31,7 @@
 	      <props>        
 	            <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>          
 	            <prop key="hibernate.show_sql">false</prop>
+	            <prop key="hibernate.jdbc.time_zone">Asia/Ho_Chi_Minh</prop>
 	       </props>
 	    </property>
 		<property name="packagesToScan" value="entities"/>

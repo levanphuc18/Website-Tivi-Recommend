@@ -48,6 +48,8 @@ public class GlobalInterceptor extends HandlerInterceptorAdapter {
 		application.setAttribute("addConfigPage", "admin/configs/add");
 		application.setAttribute("supplierPage", "admin/suppliers");
 		application.setAttribute("addSupplierPage", "admin/suppliers/add");
+		application.setAttribute("disscountPage", "admin/disscounts");
+		application.setAttribute("addDisscountPage", "admin/disscounts/add");
 		
 //		application.setAttribute("invoicePage", "admin/invoices");
 //		application.setAttribute("addInvoicePage", "admin/invoices/add");
