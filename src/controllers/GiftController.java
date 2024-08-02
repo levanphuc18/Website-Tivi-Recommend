@@ -90,6 +90,32 @@ public class GiftController {
 			model.addAttribute("listFavorite", method.getListFavourite(
 					method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
+		
+		// Hiển thị ngôi sao
+		// Lấy danh sách tất cả sản phẩm
+		List<ProductEntity> products = method.getAllProducts();
+
+		// Tạo Map để lưu thông tin đánh giá cho mỗi sản phẩm
+		Map<String, Map<String, Object>> productRatings = new HashMap<>();
+
+		for (ProductEntity product : products) {
+		    String productId = product.getId();
+		    int reviewsCount = method.getProductReviewsCount(productId); // số lượng đánh giá
+		    int totalRating = method.getTotalRating(productId); // tổng điểm đánh giá
+		    double averageRating = reviewsCount > 0 ? (double) totalRating / reviewsCount : 0.0; // điểm trung bình
+
+		    // Tạo Map để lưu thông tin đánh giá của sản phẩm
+		    Map<String, Object> reviewInfo = new HashMap<>();
+		    reviewInfo.put("averageRating", averageRating); // điểm trung bình đánh giá
+
+		    // Lưu thông tin vào Map với productId là khóa
+		    productRatings.put(productId, reviewInfo);
+		}
+
+		// Thêm danh sách sản phẩm và thông tin đánh giá vào ModelMap
+		model.addAttribute("products", products);
+		model.addAttribute("productRatings", productRatings);
+		// Hiển thị ngôi sao
 
 		return "store/index";
 	}
@@ -110,8 +136,32 @@ public class GiftController {
 					method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		}
 		model.addAttribute("list", method.getListProduct());
-		
-		
+
+		// Hiển thị ngôi sao
+		// Lấy danh sách tất cả sản phẩm
+		List<ProductEntity> products = method.getAllProducts();
+
+		// Tạo Map để lưu thông tin đánh giá cho mỗi sản phẩm
+		Map<String, Map<String, Object>> productRatings = new HashMap<>();
+
+		for (ProductEntity product : products) {
+		    String productId = product.getId();
+		    int reviewsCount = method.getProductReviewsCount(productId); // số lượng đánh giá
+		    int totalRating = method.getTotalRating(productId); // tổng điểm đánh giá
+		    double averageRating = reviewsCount > 0 ? (double) totalRating / reviewsCount : 0.0; // điểm trung bình
+
+		    // Tạo Map để lưu thông tin đánh giá của sản phẩm
+		    Map<String, Object> reviewInfo = new HashMap<>();
+		    reviewInfo.put("averageRating", averageRating); // điểm trung bình đánh giá
+
+		    // Lưu thông tin vào Map với productId là khóa
+		    productRatings.put(productId, reviewInfo);
+		}
+
+		// Thêm danh sách sản phẩm và thông tin đánh giá vào ModelMap
+		model.addAttribute("products", products);
+		model.addAttribute("productRatings", productRatings);
+		// Hiển thị ngôi sao
 		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if (httpSession.getAttribute("customerUsername") != null) {
@@ -206,6 +256,22 @@ public class GiftController {
 			lpe.add(0, method.getProduct(productId));
 			httpSession.setAttribute("listRecentViewProducts", lpe);
 		}
+		int reviewsCount = method.getProductReviewsCount(productId); // lượt đánh giá
+		int totalRating = method.getTotalRating(productId); // tổng điểm đánh giá
+		// Tính điểm trung bình
+		double averageRating = reviewsCount > 0 ? (double) totalRating / reviewsCount : 0.0;
+		
+		// Tạo Map để lưu thông tin đánh giá
+		Map<String, Object> reviewInfo = new HashMap<>();
+		reviewInfo.put("reviewsCount", reviewsCount); // Số lượng đánh giá
+		reviewInfo.put("totalRating", totalRating); // Tổng điểm đánh giá
+		reviewInfo.put("averageRating", averageRating); // Điểm trung bình đánh giá
+
+		// Thêm thông tin vào ModelMap để gửi qua giao diện
+		model.addAttribute("reviewInfo", reviewInfo);
+		
+		model.addAttribute("reviewsCount", reviewsCount);
+		
 		method.updateProductViews(productId, method.getProduct(productId).getViews() + 1);
 		model.addAttribute("product", method.getProduct(productId));
 		model.addAttribute("config", productEntity.getConfig()); // Đặt thông tin cấu hình vào model
@@ -213,7 +279,7 @@ public class GiftController {
 		model.addAttribute("listFavorite", method.getListFavourite(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 		System.out.println(productId + "; " + method.getProduct(productId).getName());
-
+		
 		
 		return "store/product-detail";
 	}
@@ -332,30 +398,7 @@ public class GiftController {
 		httpSession.removeAttribute("customerUsername");
 		return "redirect:/";
 	}
-	
-	
-	
-//	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
-//	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
-//	    System.out.println("Authorization Code: " + code);
-//	    GoogleLogin gg = new GoogleLogin();
-//	    try {
-//	        String accessToken = gg.getToken(code);
-//	        CustomerEntity customer = gg.getCustomerInfo(accessToken);
-//	        System.out.println("Access Token: " + accessToken);
-//	        System.out.println("Customer Info: " + customer.getEmail());
-//
-//
-//	        return "redirect:/"; // Chuyển hướng đến trang chính
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	        System.out.println("loi login google \n");
-//	        model.addAttribute("error", "Google sign-in failed");
-//	        return "store/sign-in"; // Quay lại trang đăng nhập với thông báo lỗi
-//	    }
-//	}
-	
-	
+
 	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
 	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
 //	    System.out.println("Authorization Code: " + code);

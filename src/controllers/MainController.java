@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -36,6 +38,33 @@ public class MainController {
 	public String store(ModelMap model, HttpSession httpSession) {
 		/* model.addAttribute("list", getListProduct()); */
 		Methods method = new Methods(factory);
+		
+		// Hiển thị ngôi sao
+		// Lấy danh sách tất cả sản phẩm
+		List<ProductEntity> products = method.getAllProducts();
+
+		// Tạo Map để lưu thông tin đánh giá cho mỗi sản phẩm
+		Map<String, Map<String, Object>> productRatings = new HashMap<>();
+
+		for (ProductEntity product : products) {
+		    String productId = product.getId();
+		    int reviewsCount = method.getProductReviewsCount(productId); // số lượng đánh giá
+		    int totalRating = method.getTotalRating(productId); // tổng điểm đánh giá
+		    double averageRating = reviewsCount > 0 ? (double) totalRating / reviewsCount : 0.0; // điểm trung bình
+
+		    // Tạo Map để lưu thông tin đánh giá của sản phẩm
+		    Map<String, Object> reviewInfo = new HashMap<>();
+		    reviewInfo.put("averageRating", averageRating); // điểm trung bình đánh giá
+
+		    // Lưu thông tin vào Map với productId là khóa
+		    productRatings.put(productId, reviewInfo);
+		}
+
+		// Thêm danh sách sản phẩm và thông tin đánh giá vào ModelMap
+		model.addAttribute("products", products);
+		model.addAttribute("productRatings", productRatings);
+		// Hiển thị ngôi sao
+		
 		model.addAttribute("list", method.getTop16RecentProduct());
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		if(httpSession.getAttribute("customerUsername")!=null) {
@@ -68,7 +97,7 @@ public class MainController {
 			httpSession.setAttribute("customerTotalQuantity", sum);
 			model.addAttribute("listFavorite", method.getListFavourite(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
 //		}
-		
+			
 		
 		// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 		// Lấy mã khách hàng từ phiên làm việc

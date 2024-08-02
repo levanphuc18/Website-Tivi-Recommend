@@ -6,6 +6,27 @@
 <head>
 <title>Light - Studio</title>
 <%@include file="/WEB-INF/views/store/include/store-head.jsp"%>
+<style>
+.star {
+	font-size: 1.5em;
+	color: lightgray;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.star.filled {
+	color: gold;
+}
+
+.star.half-filled::before {
+	content: '★';
+	color: gold;
+	position: absolute;
+	overflow: hidden;
+	width: 50%;
+}
+</style>
+
 
 </head>
 
@@ -52,12 +73,12 @@
 			</div>
 		</div>
 
-<!-- Bộ lọc sản phẩm -->
+		<!-- Bộ lọc sản phẩm -->
 		<div class="filter-container">
 			<aside class="filter-sidebar">
 				<form action="store/filter" method="get" class="filter-form">
 
-				<!-- Category -->
+					<!-- Category -->
 
 					<!-- Screen Type -->
 					<div class="filter-item">
@@ -187,15 +208,13 @@
 									value="vi_VN" scope="session" /> <fmt:formatNumber
 									value="${p.price}" type="currency" /></span>
 
-
-							<ul class="list-inline product-ratings">
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-							</ul>
-
+							<div class="product-ratings"
+								data-current-rating="${productRatings[p.id].averageRating}">
+								<span class="star" data-value="1">★</span> <span class="star"
+									data-value="2">★</span> <span class="star" data-value="3">★</span>
+								<span class="star" data-value="4">★</span> <span class="star"
+									data-value="5">★</span>
+							</div>
 
 							<c:if test="${p.quantity <= 0}">
 								<span class="p-1 ml-1 bg-gray-500 text-white">Hết hàng</span>
@@ -271,13 +290,13 @@
 									value="vi_VN" scope="session" /> <fmt:formatNumber
 									value="${p.price}" type="currency" /></span>
 
-							<ul class="list-inline product-ratings">
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-								<li><i class="rating fa fa-star"></i></li>
-							</ul>
+							<div class="product-ratings"
+								data-current-rating="${productRatings[p.id].averageRating}">
+								<span class="star" data-value="1">★</span> <span class="star"
+									data-value="2">★</span> <span class="star" data-value="3">★</span>
+								<span class="star" data-value="4">★</span> <span class="star"
+									data-value="5">★</span>
+							</div>
 
 							<c:if test="${p.quantity <= 0}">
 								<span class="p-1 ml-1 bg-gray-500 text-white">Hết hàng</span>
@@ -303,17 +322,38 @@
 
 	</main>
 
-	
+
 	<%@include file="/WEB-INF/views/store/include/store-footer.jsp"%>
 	<script
 		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<!-- <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script> -->
 	<!-- <script src="./assets/js/main.js"></script> -->
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
-	
 
-	
-	
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const ratingElements = document
+					.querySelectorAll('.product-ratings');
+
+			ratingElements.forEach(function(ratingElement) {
+				const currentRating = parseFloat(ratingElement
+						.getAttribute('data-current-rating'));
+				const stars = ratingElement.querySelectorAll('.star');
+
+				stars
+						.forEach(function(star) {
+							const starValue = parseInt(star
+									.getAttribute('data-value'));
+							if (currentRating >= starValue) {
+								star.classList.add('filled');
+							} else if (currentRating >= starValue - 0.5) {
+								star.classList.add('half-filled');
+							}
+						});
+			});
+		});
+	</script>
+
 </body>
 
 </html>

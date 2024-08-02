@@ -788,5 +788,52 @@ public class Methods {
 	        }
 	        return updated;
 	    }
+	    
+//	    // đếm số lượng đánh giá của sản phẩm
+	    public int getProductReviewsCount(String productId) {
+	        int reviewCount = 0;
+	        Session session = null;
+	        try {
+	            session = factory.openSession(); // Mở phiên làm việc với cơ sở dữ liệu
+	            String hql = "SELECT COUNT(*) FROM RatingProductEntity WHERE productId = :productId"; // Câu lệnh HQL để đếm số lượng đánh giá theo productId
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId); // Gán tham số productId vào câu lệnh
+	            Long countResult = (Long) query.uniqueResult(); // Thực thi truy vấn và lấy kết quả
+	            if (countResult != null) {
+	                reviewCount = countResult.intValue(); // Chuyển đổi Long thành int
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+	        } finally {
+	            if (session != null) {
+	                session.close(); // Đóng phiên làm việc với cơ sở dữ liệu
+	            }
+	        }
+	        return reviewCount; // Trả về số lượng đánh giá
+	    }
+	    
+	    // Tính tổng điểm đánh giá
+	    public int getTotalRating(String productId) {
+	        long totalRating = 0;
+	        Session session = null;
+	        try {
+	            session = factory.openSession(); // Mở phiên làm việc với cơ sở dữ liệu
+	            String hql = "SELECT SUM(rating) FROM RatingProductEntity WHERE productId = :productId"; // Câu lệnh HQL để tính tổng điểm đánh giá theo productId
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId); // Gán tham số productId vào câu lệnh
+	            Long sumResult = (Long) query.uniqueResult(); // Thực thi truy vấn và lấy kết quả
+	            if (sumResult != null) {
+	                totalRating = sumResult; // Lưu tổng điểm đánh giá
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+	        } finally {
+	            if (session != null) {
+	                session.close(); // Đóng phiên làm việc với cơ sở dữ liệu
+	            }
+	        }
+	        return (int) totalRating; // Trả về tổng điểm đánh giá
+	    }
+
 
 }
