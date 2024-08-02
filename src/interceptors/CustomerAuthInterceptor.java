@@ -11,6 +11,14 @@ public class CustomerAuthInterceptor extends HandlerInterceptorAdapter{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		
+		String requestUri = request.getRequestURI();
+	    // Bỏ qua kiểm tra cho URL "/filter"
+	    if (requestUri.contains("/filter")) {
+	        return true;
+	    }
+	    
 		//System.out.println("Authorize Interceptor preHandler()");
 		HttpSession session = request.getSession();	
 		if(session.getAttribute("customerUsername") == null) {
@@ -18,7 +26,7 @@ public class CustomerAuthInterceptor extends HandlerInterceptorAdapter{
 			return false;
 		}else {
 			System.out.println(session.getAttribute("customerUsername"));
-		}
+		}	
 		return true;
 
 	}

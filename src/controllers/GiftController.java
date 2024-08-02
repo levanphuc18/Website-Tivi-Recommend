@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.BufferedReader;
 
+
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,16 +15,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
+import org.apache.http.impl.auth.GGSSchemeBase;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,12 +36,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.apache.http.client.fluent.Request;
 
 import entities.CartDetailEntity;
 import entities.CustomerEntity;
 import entities.FavoriteProductEntity;
+import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
 import entities.RatingProductEntity;
@@ -45,10 +53,13 @@ import models.ChangePasswordModel;
 import models.CustomerForgotPasswordModel;
 import models.CustomerLoginAccountModel;
 import models.CustomerValidateModel;
+import constant.CustomerGoogleDto;
+import constant.GoogleLogin;
 import models.Mailer;
 
 import models.OrderModel;
 import vnpay.Config;
+
 
 @Transactional
 @Controller
@@ -226,18 +237,6 @@ public class GiftController {
 		return "store/category-products";
 	}
 
-	@RequestMapping(value = "/sign-in")
-	public String signIn(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
-		Methods method = new Methods(factory);
-
-		httpSession.setAttribute("listCategory", method.getListCategory());
-		model.addAttribute("account", new CustomerLoginAccountModel());
-		if ((httpSession.getAttribute("customerUsername") != null)) {
-			attributes.addFlashAttribute("message", "Vui lòng đăng xuất nếu muốn đăng nhập lại");
-			return returnRedirectControl("index");
-		}
-		return "store/sign-in";
-	}
 
 	@RequestMapping(value = "/forgot-password")
 	public String forgotPassword(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
@@ -333,10 +332,102 @@ public class GiftController {
 		httpSession.removeAttribute("customerUsername");
 		return "redirect:/";
 	}
+	
+	
+	
+//	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
+//	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
+//	    System.out.println("Authorization Code: " + code);
+//	    GoogleLogin gg = new GoogleLogin();
+//	    try {
+//	        String accessToken = gg.getToken(code);
+//	        CustomerEntity customer = gg.getCustomerInfo(accessToken);
+//	        System.out.println("Access Token: " + accessToken);
+//	        System.out.println("Customer Info: " + customer.getEmail());
+//
+//
+//	        return "redirect:/"; // Chuyển hướng đến trang chính
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        System.out.println("loi login google \n");
+//	        model.addAttribute("error", "Google sign-in failed");
+//	        return "store/sign-in"; // Quay lại trang đăng nhập với thông báo lỗi
+//	    }
+//	}
+	
+	
+	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
+	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
+//	    System.out.println("Authorization Code: " + code);
+	    GoogleLogin gg = new GoogleLogin();
+	    try {
+	        String accessToken = gg.getToken(code);
+	        CustomerGoogleDto customer = gg.getCustomerInfo(accessToken);
+//	        System.out.println("Access Token: " + accessToken);
+//	        System.out.println("Customer Info: " + customer.getEmail());
+//	        System.out.println("Customer fn: " + customer.getGiven_name());
+//	        System.out.println("Customer ln: " + customer.getFamily_name());
+	        Methods method = new Methods(factory);
+	        String email = customer.getEmail().trim();
+	        
+	        // Kiểm tra xem người dùng đã tồn tại chưa
+	        if (method.isCustomerWithUsernameExit(email) || method.isAdminWithUsernameExit(email)) {
+	        	request.getSession().setAttribute("customerUsername", email);
+	            // Nếu đã tồn tại, chuyển hướng đến trang chính
+	            return "redirect:/";
+	        } else {
+	            // Nếu chưa tồn tại, tạo tài khoản mới
+	            CustomerEntity newCustomer = new CustomerEntity();
+	            newCustomer.setId(method.createTheNextCustomerId().trim());
+	            newCustomer.setUsername(email);
+	            newCustomer.setEmail(email);
+	            newCustomer.setPassword("113"); // Sinh mật khẩu ngẫu nhiên
+	            newCustomer.setFirstname(customer.getGiven_name()); // Hoặc đặt tên từ thông tin khách hàng
+	            newCustomer.setLastname(customer.getFamily_name()); // Hoặc đặt tên từ thông tin khách hàng
+	            
+	            // Mã hóa mật khẩu
+	            String paString= newCustomer.getPassword();
+	            String hashedPassword = encryption.hashPassword(paString);
+	            newCustomer.setPassword(hashedPassword);
+
+	            // Xử lý đăng ký tài khoản mới
+	            if (method.insertCustomer(newCustomer)) {
+	                request.getSession().setAttribute("customerUsername", newCustomer.getUsername());
+	                System.out.println("Thêm thành công");
+	                return "redirect:/";
+	            } else {
+	                model.addAttribute("error", "Đăng ký thất bại!");
+	                System.out.println("Thêm thất bại");
+	                return "store/sign-in";
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        System.out.println("Lỗi login Google \n");
+	        model.addAttribute("error", "Google sign-in failed");
+	        return "store/sign-in";
+	    }
+	}
+
+	@RequestMapping(value = "/sign-in")
+	public String signIn(ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
+		System.out.println("Authorization Code: 1 ");
+		Methods method = new Methods(factory);
+
+		httpSession.setAttribute("listCategory", method.getListCategory());
+		model.addAttribute("account", new CustomerLoginAccountModel());
+		if ((httpSession.getAttribute("customerUsername") != null)) {
+			attributes.addFlashAttribute("message", "Vui lòng đăng xuất nếu muốn đăng nhập lại");
+			return returnRedirectControl("index");
+		}
+		return "store/sign-in";
+	}
 
 	@RequestMapping(value = "/sign-in", method = RequestMethod.POST)
 	public String signIn(@ModelAttribute("account") CustomerLoginAccountModel account, ModelMap model,
-			BindingResult errors, HttpSession httpSession, RedirectAttributes attributes) throws NoSuchAlgorithmException {
+			BindingResult errors, HttpSession httpSession,HttpServletRequest request,
+			HttpServletResponse response, RedirectAttributes attributes) throws NoSuchAlgorithmException {
+		System.out.println("Authorization Code: 2");
 		Methods method = new Methods(factory);
 		
 		// thực tập md5
@@ -365,7 +456,7 @@ public class GiftController {
 			for (CartDetailEntity c : method.getCustomerByUsername(account.getUsername()).getCartDetails()) {
 				sum = sum + c.getQuantity();
 			}
-			System.out.println(sum);
+
 			httpSession.setAttribute("customerTotalQuantity", sum);
 			attributes.addFlashAttribute("message", "Đăng nhập thành công!");
 			return "redirect:/";
@@ -426,18 +517,6 @@ public class GiftController {
 		} else if (!validateEmail(customer.getEmail().trim())) {
 			errors.rejectValue("email", "customer", "Email không đúng định dạng!");
 		}
-//		if (customer.getCity().trim().equals("0")) {
-//			errors.rejectValue("city", "customer", "Vui lòng chọn Tỉnh/ Thành phố!");
-//		}
-//		if (customer.getDistrict().trim().equals("0")) {
-//			errors.rejectValue("district", "customer", "Vui lòng chọn Quận/ Huyện!");
-//		}
-//		if (customer.getCommune().trim().equals("0")) {
-//			errors.rejectValue("commune", "customer", "Vui lòng chọn Xã/ Phường!");
-//		}
-//		if (customer.getSpecificAddress().trim().length() == 0) {
-//			errors.rejectValue("specificAddress", "customer", "Vui lòng nhập địa chỉ chi tiết!");
-//		}
 		if (customer.getFullAddress().trim().length() == 0) {
 			errors.rejectValue("fullAddress", "customer", "Vui lòng nhập địa chỉ!");
 		}
@@ -583,23 +662,115 @@ public class GiftController {
 				method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
 		return "store/user-change-password";
 	}
-
+	
 	@RequestMapping(value = "/user-info/order-history")
 	public String orderHistory(HttpSession httpSession, ModelMap model) {
-		Methods method = new Methods(factory);
-		httpSession.setAttribute("listCategory", method.getListCategory());
-		model.addAttribute("listOrder", method.getCustomerOrder(
-				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
-		model.addAttribute("customerEntity",
-				method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
-		System.out.println("order-history");
-		return "store/order-history";
+	    Methods method = new Methods(factory);
+	    String customerId = method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"));
+
+	    // Lấy danh sách các đơn hàng của khách hàng
+	    List<OrderEntity> orders = method.getCustomerOrder(customerId);
+
+	    // Tạo Map để lưu đánh giá theo tổ hợp productId và orderId
+	    Map<String, Map<String, Integer>> productOrderRatings = new HashMap<>();
+	    for (OrderEntity order : orders) {
+	        for (OrderDetailEntity detail : order.getOrderDetails()) {
+	            ProductEntity product = detail.getProduct();
+	            if (product != null) {
+	                String productId = product.getId();
+	                String orderId = order.getId();
+	                Integer rating = method.getRatingByProductAndOrder(productId, orderId);
+	                
+	                // Tạo Map cho productId nếu chưa có
+	                productOrderRatings.putIfAbsent(productId, new HashMap<>());
+	                productOrderRatings.get(productId).put(orderId, rating);
+	            }
+	        }
+	    }
+
+	    httpSession.setAttribute("listCategory", method.getListCategory());
+	    model.addAttribute("listOrder", orders);
+	    model.addAttribute("customerEntity", method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+	    model.addAttribute("productOrderRatings", productOrderRatings); // Thêm thông tin đánh giá vào mô hình
+
+	    System.out.println("order-history");
+	    return "store/order-history";
 	}
 
 	
+//	@RequestMapping(value = "/user-info/order-history")
+//	public String orderHistory(HttpSession httpSession, ModelMap model) {
+//		Methods method = new Methods(factory);
+//		String customerId = method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"));
+//
+//		
+//		
+//		
+//		httpSession.setAttribute("listCategory", method.getListCategory());
+//		model.addAttribute("listOrder", method.getCustomerOrder(
+//				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
+//		model.addAttribute("customerEntity",
+//				method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername")));
+//		System.out.println("order-history");
+//		return "store/order-history";
+//	}
+
+	
+//	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
+//	public String submitRating(@RequestParam("orderId") String orderId,
+//								@RequestParam("customerId") String customerId,
+//	                           @RequestParam("productId") String productId,
+//	                           @RequestParam("rating") int rating,
+//	                           ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
+//	    
+//	    Methods method = new Methods(factory);
+//	    try {
+//	        // Lấy thông tin customer từ session và orderId, productId từ request
+//	        CustomerEntity customer = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername"));
+//	        
+//	     // Tạo một đối tượng RatingProductEntity từ dữ liệu nhận được
+//	        RatingProductEntity ratingEntity = new RatingProductEntity();
+//	        ratingEntity.setOrderId(orderId);    // Thiết lập orderId
+//	        ratingEntity.setCustomer(customer);  // Thiết lập khách hàng
+//	        ratingEntity.setProductId(productId);  // Thiết lập productId
+//	        ratingEntity.setRating(rating);      // Thiết lập rating
+//
+//	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
+//	        if (method.insertRating(ratingEntity)) {
+//	        	
+//	        	// Trong phương thức submitRating của controller
+//	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
+//	        	model.addAttribute("listOrder", listOrder);
+//	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
+//	            httpSession.setAttribute("customerUsername", customer.getUsername());
+//	            System.out.println("order-history- Rating success \n");
+//	            
+//	         // lưu đánh giá
+//	        String list = customer.getId() + "," + productId + "," + ratingEntity.getRating()  ;
+//			String tmp = method.saveRatingRecord(list);
+////			String tmp = "";
+//			
+//			System.out.println("get danh gia");
+//			System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + ratingEntity.getRating());
+////			System.out.println(" PHUC "+" "+ tmp);
+//			// lưu đánh giá
+//	            
+//	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
+//	        } else {
+//	            model.addAttribute("message", "Đánh giá thất bại!");
+//	            System.out.println("order-history- Rating fail");
+//	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
+//	        }
+//	    } catch (Exception e) {
+//	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
+//	        return "store/user-info"; // Xử lý ngoại lệ nếu có
+//	    }
+//	}
+	
+	
 	@RequestMapping(value = "/user-info/order-history/submit-rating", method = RequestMethod.POST)
 	public String submitRating(@RequestParam("orderId") String orderId,
-								@RequestParam("customerId") String customerId,
+	                           @RequestParam("customerId") String customerId,
 	                           @RequestParam("productId") String productId,
 	                           @RequestParam("rating") int rating,
 	                           ModelMap model, HttpSession httpSession, RedirectAttributes attributes) {
@@ -609,44 +780,64 @@ public class GiftController {
 	        // Lấy thông tin customer từ session và orderId, productId từ request
 	        CustomerEntity customer = method.getCustomerByUsername((String) httpSession.getAttribute("customerUsername"));
 	        
-	     // Tạo một đối tượng RatingProductEntity từ dữ liệu nhận được
-	        RatingProductEntity ratingEntity = new RatingProductEntity();
-	        ratingEntity.setOrderId(orderId);    // Thiết lập orderId
-	        ratingEntity.setCustomer(customer);  // Thiết lập khách hàng
-	        ratingEntity.setProductId(productId);  // Thiết lập productId
-	        ratingEntity.setRating(rating);      // Thiết lập rating
-
-	        // Gọi phương thức insertRating để lưu vào cơ sở dữ liệu
-	        if (method.insertRating(ratingEntity)) {
-	        	
-	        	// Trong phương thức submitRating của controller
-	        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
-	        	model.addAttribute("listOrder", listOrder);
-	            attributes.addFlashAttribute("message", "Đăng ký thành công!");
-	            httpSession.setAttribute("customerUsername", customer.getUsername());
-	            System.out.println("order-history- Rating success \n");
-	            
-	         // lưu đánh giá
-	        String list = customer.getId() + "," + productId + "," + ratingEntity.getRating()  ;
-			String tmp = method.saveRatingRecord(list);
-//			String tmp = "";
-			
-			System.out.println("get danh gia");
-			System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + ratingEntity.getRating());
-//			System.out.println(" PHUC "+" "+ tmp);
-			// lưu đánh giá
-	            
-	            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công
+	        // Kiểm tra xem đánh giá đã tồn tại chưa
+	        RatingProductEntity existingRating = method.getRatingByOrderIdAndProductId(orderId, productId, customerId);
+	        
+	        if (existingRating != null) {
+	            // Nếu đã có đánh giá, cập nhật đánh giá
+	            existingRating.setRating(rating);
+	            if (method.updateRating(existingRating,rating)) {
+	                attributes.addFlashAttribute("message", "Cập nhật đánh giá thành công!");
+	            } else {
+	                attributes.addFlashAttribute("message", "Cập nhật đánh giá thất bại!");
+	            }
 	        } else {
-	            model.addAttribute("message", "Đánh giá thất bại!");
-	            System.out.println("order-history- Rating fail");
-	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
+	            // Nếu chưa có đánh giá, thêm mới đánh giá
+	            RatingProductEntity ratingEntity = new RatingProductEntity();
+	            ratingEntity.setOrderId(orderId);
+	            ratingEntity.setCustomer(customer);
+	            ratingEntity.setProductId(productId);
+	            ratingEntity.setRating(rating);
+
+	            if (method.insertRating(ratingEntity)) {
+	            	// Trong phương thức submitRating của controller
+		        	List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
+		        	model.addAttribute("listOrder", listOrder);
+		            attributes.addFlashAttribute("message", "Đánh giá thành công!");
+		            httpSession.setAttribute("customerUsername", customer.getUsername());
+		            System.out.println("order-history- Rating success \n");
+		            
+		         // lưu đánh giá
+		        String list = customer.getId() + "," + productId + "," + ratingEntity.getRating()  ;
+				String tmp = method.saveRatingRecord(list);
+//				String tmp = "";
+				
+				System.out.println("get danh gia");
+				System.out.println("CustomerId: "+customer.getId() + " \nProductId: " + productId + " \nRating: " + ratingEntity.getRating());
+//				System.out.println(" PHUC "+" "+ tmp);
+				// lưu đánh giá
+		            
+		            return "store/order-history"; // Chuyển hướng về trang chủ sau khi đánh giá thành công           
+	            } else {
+	            	 model.addAttribute("message", "Đánh giá thất bại!");
+	 	            System.out.println("order-history- Rating fail");
+	 	            return "store/order-history"; // Trở lại trang lịch sử đơn hàng nếu thất bại
+//	                attributes.addFlashAttribute("message", "Đăng ký đánh giá thất bại!");
+	            }
 	        }
+	        
+	        // Cập nhật thông tin đơn hàng
+	        List<OrderEntity> listOrder = method.getCustomerOrder(method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername")));
+	        model.addAttribute("listOrder", listOrder);
+	        httpSession.setAttribute("customerUsername", customer.getUsername());
+
+	        return "store/order-history";
 	    } catch (Exception e) {
-	        model.addAttribute("message", "Lỗi khi đánh giá: " + e.getMessage());
-	        return "store/user-info"; // Xử lý ngoại lệ nếu có
+	        model.addAttribute("message", "Lỗi khi xử lý đánh giá: " + e.getMessage());
+	        return "store/user-info";
 	    }
 	}
+
 
 	
 	// thực tập md5

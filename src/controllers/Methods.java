@@ -13,6 +13,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import com.mchange.v2.codegen.bean.PropsToStringGeneratorExtension;
+
 import entities.AccountEntity;
 import entities.AdminEntity;
 import entities.CartDetailEntity;
@@ -121,7 +123,7 @@ public class Methods {
 			// read any errors from the attempted command
 			System.out.println("Here is the standard error of the command (if any):\n");
 			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
+				System.out.println(s +"\n");
 			}
 
 			// System.exit(0);
@@ -133,7 +135,10 @@ public class Methods {
 		return str;
 
 	}
+	
 	// ĐỀ XUẤTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	
+	
 	
 	public String createTheNextCustomerId() {
 		Session session = factory.getCurrentSession();
@@ -723,5 +728,65 @@ public class Methods {
 			return true;
 		}
 	    
+	    public RatingProductEntity getRatingByOrderIdAndProductId(String orderId, String productId, String customerId) {
+	        RatingProductEntity rating = null;
+	        try {
+	            // Sử dụng Session hoặc EntityManager để thực hiện truy vấn
+	            Session session = factory.openSession();
+	            String hql = "FROM RatingProductEntity WHERE orderId = :orderId AND productId = :productId AND customer.id = :customerId";
+	            Query query = session.createQuery(hql);
+	            query.setParameter("orderId", orderId);
+	            query.setParameter("productId", productId);
+	            query.setParameter("customerId", customerId);
+	            rating = (RatingProductEntity) query.uniqueResult();
+	            session.close();
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return rating;
+	    }
+	    
+	    public Integer getRatingByProductAndOrder(String productId, String orderId) {
+	        Integer rating = null;
+	        try {
+	            Session session = factory.openSession();
+	            String hql = "SELECT rating FROM RatingProductEntity WHERE productId = :productId AND orderId = :orderId";
+	            Query query = session.createQuery(hql);
+	            query.setParameter("productId", productId);
+	            query.setParameter("orderId", orderId);
+	            Object result = query.uniqueResult();
+	            if (result != null) {
+	                rating = (Integer) result;
+	            }
+	            session.close();
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return rating;
+	    }
+
+	    public boolean updateRating(RatingProductEntity existingRating, int newRating) {
+	        boolean updated = false;
+	        Transaction transaction = null;
+	        try {
+	            // Mở phiên làm việc với cơ sở dữ liệu
+	            Session session = factory.openSession();
+	            transaction = session.beginTransaction();
+	            
+	            // Cập nhật rating cho đối tượng đã tồn tại
+	            existingRating.setRating(newRating);
+	            session.update(existingRating);
+	            transaction.commit();
+	            updated = true;
+	            
+	            session.close();
+	        } catch (Exception e) {
+	            if (transaction != null) {
+	                transaction.rollback();
+	            }
+	            e.printStackTrace(); // Xử lý ngoại lệ
+	        }
+	        return updated;
+	    }
 
 }

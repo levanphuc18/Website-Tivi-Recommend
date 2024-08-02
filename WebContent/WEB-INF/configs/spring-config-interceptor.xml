@@ -32,6 +32,7 @@
 			<mvc:mapping path="/store/**"/>
 			<mvc:exclude-mapping path="/store"/>
 			<mvc:exclude-mapping path="/store/sign-in"/>
+			<mvc:exclude-mapping path="/store/google-sign-in"/>
 			<mvc:exclude-mapping path="/store/sign-up"/>
 			<mvc:exclude-mapping path="/store/all/**"/>
 			<mvc:exclude-mapping path="/store/search/**"/>
