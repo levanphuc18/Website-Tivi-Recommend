@@ -7,6 +7,17 @@
 <title>Lịch sử mua hàng</title>
 <%@include file="/WEB-INF/views/store/include/store-head.jsp"%>
 <style type="text/css">
+.star {
+    color: gray;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.star.selected {
+    color: gold;
+}
+
+
 .error::before {
 	content: '';
 	display: block;
@@ -35,6 +46,17 @@
 	height: 660px;
 	overflow-y: scroll;
 }
+
+.star {
+    color: gray;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.star.selected {
+    color: gold;
+}
+
 </style>
 </head>
 
@@ -108,7 +130,7 @@
 								tiền</div>
 							<div
 								class="order-cell w-1/6 p-2 border text-center align-middle font-bold">Đánh
-								giá</div>
+								gia</div>
 						</div>
 						<c:forEach var="order" items="${listOrder}" varStatus="loop">
 							<p class="p-2 text-indigo-500 font-bold">${loop.index+1}.</p>
@@ -137,17 +159,16 @@
 
 									<div
 										class="order-cell w-1/6 p-2 border text-center align-middle">
-										<div class="product-ratings" data-order-id="${order.id}"
-											data-product-id="${c.product.id}">
-											<ul class="list-inline">
-												<li><i class="rating fa fa-star"></i></li>
-												<li><i class="rating fa fa-star"></i></li>
-												<li><i class="rating fa fa-star"></i></li>
-												<li><i class="rating fa fa-star"></i></li>
-												<li><i class="rating fa fa-star"></i></li>
-											</ul>
-										</div>
+										<div class="product-ratings" data-product-id="${c.product.id}" data-order-id="${order.id}" data-current-rating="${productOrderRatings[c.product.id][order.id]}">
+    <span class="star" data-value="1" onclick="submitRating(1, this)">★</span>
+    <span class="star" data-value="2" onclick="submitRating(2, this)">★</span>
+    <span class="star" data-value="3" onclick="submitRating(3, this)">★</span>
+    <span class="star" data-value="4" onclick="submitRating(4, this)">★</span>
+    <span class="star" data-value="5" onclick="submitRating(5, this)">★</span>
+</div>
+
 									</div>
+
 								</div>
 							</c:forEach>
 
@@ -165,107 +186,82 @@
 	</main>
 	<%@include file="/WEB-INF/views/store/include/store-footer.jsp"%>
 
-	<!-- <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script> -->
-	<!-- <script src="./assets/js/main.js"></script> -->
+	<script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 	<script
 		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
-	<!-- <script src="./assets/js/sign-up.js"></script> -->
-	<%-- 	<script src="<c:url value='/resources/store/assets/js/sign-up.js'/>"></script> --%>
-	<script type="text/javascript">
-		var a = document.getElementsByClassName("error");
-		for (var i = 0; i < a.length; i++) {
-			a[i].addEventListener("click", function(e) {
-				e.target.style.display = "none";
-			})
-		}
+<script type="text/javascript">
+    // Hàm gửi đánh giá lên máy chủ
+    // Hàm gửi đánh giá lên máy chủ
+function submitRating(rating, starElement) {
+    console.log('Submitting rating:', rating);
+    const container = starElement.closest('.product-ratings');
+    const productId = container.getAttribute('data-product-id');
+    const orderId = container.getAttribute('data-order-id');
+    const customerId = "${customerEntity.id}";
+
+    // Cập nhật giao diện sao ngay lập tức
+    updateStars(rating, productId, orderId);
+
+    // Gửi dữ liệu đánh giá đến máy chủ
+    fetch('/LightStudio/store/user-info/order-history/submit-rating', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'productId': productId,
+            'rating': rating,
+            'orderId': orderId,
+            'customerId': customerId
+        })
+    }).then(response => {
+        if (response.ok) {
+            console.log(`Review submitted successfully for product ${productId}`);
+            // Tải lại trang sau khi gửi đánh giá thành công
+            window.location.reload();
+        } else {
+            console.error('Failed to submit review. Status:', response.status);
+        }
+    }).catch(error => console.error('Error:', error));
+}
+
+
+
+// Hàm cập nhật giao diện sao
+function updateStars(rating, productId, orderId) {
+    console.log('Updating stars for productId:', productId, 'orderId:', orderId, 'rating:', rating);
+    const stars = document.querySelectorAll(`.product-ratings[data-product-id='${productId}'][data-order-id='${orderId}'] .star`);
+    
+    stars.forEach(star => {
+        const starValue = parseInt(star.getAttribute('data-value'));
+        if (starValue <= rating) {
+            star.classList.add('selected');
+        } else {
+            star.classList.remove('selected');
+        }
+    });
+}
+
+    // Khi trang được tải, thiết lập sao theo đánh giá hiện tại
+window.addEventListener('load', () => {
+        document.querySelectorAll('.product-ratings').forEach(container => {
+            const currentRating = parseInt(container.getAttribute('data-current-rating')) || 0;
+            const stars = container.querySelectorAll('.star');
+            
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                if (starValue <= currentRating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        });
+    });
+
 	</script>
 
-
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-
-	<script>
-		$(document)
-				.ready(
-						function() {
-							// Bắt sự kiện click vào bất kỳ ngôi sao nào trong danh sách đánh giá
-							$(".product-ratings ul li")
-									.click(
-											function() {
-												var clickedIndex = $(this)
-														.index() + 1; // Chỉ số của sao được click (bắt đầu từ 0)
-
-												// Đặt lại màu sắc cho tất cả các sao để chúng trở về màu xám
-												$(this).siblings().find(
-														".rating").removeClass(
-														"rating-selected");
-
-												// Đặt màu sắc cho các sao từ đầu đến sao được click thành màu vàng
-												$(this)
-														.prevAll()
-														.addBack()
-														.find(".rating")
-														.addClass(
-																"rating-selected");
-
-												// Lấy id sản phẩm từ thuộc tính data-product-id của phần tử cha
-												var productId = $(this)
-														.closest(
-																'.product-ratings')
-														.data('product-id');
-												var orderId = $(this).closest(
-														'.product-ratings')
-														.data('order-id');
-
-												// Gọi AJAX để gửi dữ liệu đánh giá lên server
-												$
-														.ajax({
-															url : "/LightStudio/store/user-info/order-history/submit-rating", // Đường dẫn tới controller xử lý
-															method : "POST",
-															data : {
-																orderId : orderId,
-																customerId : "${customerEntity.id}",
-																productId : productId,
-																rating : clickedIndex
-															},
-															success : function(
-																	response) {
-																console
-																		.log("Đã gửi đánh giá thành công.");
-																window.location.href = "/LightStudio/store/user-info/order-history"
-																console
-																		.log(
-																				"Order ID:",
-																				orderId);
-																console
-																		.log(
-																				"Customer ID:",
-																				"${customerEntity.id}");
-																console
-																		.log(
-																				"Product ID:",
-																				productId);
-																console
-																		.log(
-																				"Rating:",
-																				clickedIndex);
-															},
-															error : function(
-																	xhr,
-																	status,
-																	error) {
-																console
-																		.error(
-																				"Lỗi khi gửi đánh giá:",
-																				error);
-																// Xử lý lỗi nếu có
-															}
-														});
-											});
-						});
-	</script>
 </body>
 
 </html>
