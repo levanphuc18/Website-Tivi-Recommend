@@ -23,7 +23,7 @@ import entities.OrderDetailEntity;
 import entities.OrderEntity;
 import entities.ProductEntity;
 import entities.RatingProductEntity;
-import models.RatingModel;
+
 
 
 public class Methods {
