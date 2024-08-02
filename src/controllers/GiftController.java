@@ -48,7 +48,6 @@ import models.CustomerValidateModel;
 import models.Mailer;
 
 import models.OrderModel;
-import models.RatingModel;
 import vnpay.Config;
 
 @Transactional
