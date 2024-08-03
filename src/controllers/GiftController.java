@@ -1080,33 +1080,6 @@ public class GiftController {
 	@RequestMapping("/all")
 	public String allProduct(ModelMap model, HttpServletRequest request, HttpSession httpSession) {
 		Methods method = new Methods(factory);
-		
-		// Hiển thị ngôi sao
-		// Lấy danh sách tất cả sản phẩm
-		List<ProductEntity> products = method.getAllProducts();
-
-		// Tạo Map để lưu thông tin đánh giá cho mỗi sản phẩm
-		Map<String, Map<String, Object>> productRatings = new HashMap<>();
-
-		for (ProductEntity product : products) {
-		    String productId = product.getId();
-		    int reviewsCount = method.getProductReviewsCount(productId); // số lượng đánh giá
-		    int totalRating = method.getTotalRating(productId); // tổng điểm đánh giá
-		    double averageRating = reviewsCount > 0 ? (double) totalRating / reviewsCount : 0.0; // điểm trung bình
-
-		    // Tạo Map để lưu thông tin đánh giá của sản phẩm
-		    Map<String, Object> reviewInfo = new HashMap<>();
-		    reviewInfo.put("averageRating", averageRating); // điểm trung bình đánh giá
-
-		    // Lưu thông tin vào Map với productId là khóa
-		    productRatings.put(productId, reviewInfo);
-		}
-
-		// Thêm danh sách sản phẩm và thông tin đánh giá vào ModelMap
-		model.addAttribute("products", products);
-		model.addAttribute("productRatings", productRatings);
-		// Hiển thị ngôi sao	
-		
 		httpSession.setAttribute("listCategory", method.getListCategory());
 		PagedListHolder pagedListHolder = new PagedListHolder(method.getAllProducts());
 		int page = ServletRequestUtils.getIntParameter(request, "p", 0);
@@ -1117,7 +1090,6 @@ public class GiftController {
 		model.addAttribute("pagedListHolder", pagedListHolder);
 		model.addAttribute("listFavorite", method.getListFavourite(
 				method.getCustomerIdByUserName((String) httpSession.getAttribute("customerUsername"))));
-
 		return "store/all-products";
 	}
 
