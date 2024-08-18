@@ -8,15 +8,14 @@
 <%@include file="/WEB-INF/views/store/include/store-head.jsp"%>
 <style type="text/css">
 .star {
-    color: gray;
-    font-size: 24px;
-    cursor: pointer;
+	color: gray;
+	font-size: 24px;
+	cursor: pointer;
 }
 
 .star.selected {
-    color: gold;
+	color: gold;
 }
-
 
 .error::before {
 	content: '';
@@ -48,15 +47,14 @@
 }
 
 .star {
-    color: gray;
-    font-size: 24px;
-    cursor: pointer;
+	color: gray;
+	font-size: 24px;
+	cursor: pointer;
 }
 
 .star.selected {
-    color: gold;
+	color: gold;
 }
-
 </style>
 </head>
 
@@ -133,7 +131,42 @@
 								gia</div>
 						</div>
 						<c:forEach var="order" items="${listOrder}" varStatus="loop">
-							<p class="p-2 text-indigo-500 font-bold">${loop.index+1}.</p>
+							<div class="p-2 text-indigo-500 font-bold">
+								${loop.index + 1}.
+								<ul
+									class="list-inline list-group-flush list-group-borderless text-md-end mb-0">
+									<!-- Hiển thị văn bản "Hủy đơn hàng" nếu trạng thái là -1 -->
+									<li class="list-inline-item px-0 px-sm-2"
+										style="${order.state == -1 ? 'display: block;' : 'display: none;'}">
+										<span class="text-danger">Trạng thái: Hủy đơn hàng</span>
+									</li>
+
+									<!-- Hiển thị văn bản "Đơn hàng mới đến" nếu trạng thái là 0 -->
+									<li class="list-inline-item px-0 px-sm-2"
+										style="${order.state == 0 ? 'display: block;' : 'display: none;'}">
+										<span class="text-info">Trạng thái: Đơn hàng mới</span>
+									</li>
+
+									<!-- Hiển thị văn bản "Khách hàng đã xác nhận" nếu trạng thái là 1 -->
+									<li class="list-inline-item px-0 px-sm-2"
+										style="${order.state == 1 ? 'display: block;' : 'display: none;'}">
+										<span class="text-tertiary">Trạng thái: Đã
+											xác nhận</span>
+									</li>
+
+									<!-- Hiển thị văn bản "Đang xử lý" nếu trạng thái là 2 -->
+									<li class="list-inline-item px-0 px-sm-2"
+										style="${order.state == 2 ? 'display: block;' : 'display: none;'}">
+										<span class="text-secondary">Trạng thái: Đang xử lý</span>
+									</li>
+
+									<!-- Hiển thị văn bản "Đã hoàn thành" nếu trạng thái là 3 -->
+									<li class="list-inline-item px-0 px-sm-2"
+										style="${order.state == 3 ? 'display: block;' : 'display: none;'}">
+										<span class="text-success">Trạng thái: Đã hoàn thành</span>
+									</li>
+								</ul>
+							</div>
 
 							<c:forEach var="c" items="${order.orderDetails}">
 								<div class="order-row flex">
@@ -159,13 +192,20 @@
 
 									<div
 										class="order-cell w-1/6 p-2 border text-center align-middle">
-										<div class="product-ratings" data-product-id="${c.product.id}" data-order-id="${order.id}" data-current-rating="${productOrderRatings[c.product.id][order.id]}">
-    <span class="star" data-value="1" onclick="submitRating(1, this)">★</span>
-    <span class="star" data-value="2" onclick="submitRating(2, this)">★</span>
-    <span class="star" data-value="3" onclick="submitRating(3, this)">★</span>
-    <span class="star" data-value="4" onclick="submitRating(4, this)">★</span>
-    <span class="star" data-value="5" onclick="submitRating(5, this)">★</span>
-</div>
+										<div class="product-ratings" data-product-id="${c.product.id}"
+											data-order-id="${order.id}"
+											data-current-rating="${productOrderRatings[c.product.id][order.id]}"
+											data-order-state="${order.state}">
+											<!-- Thêm thuộc tính này -->
+											<span class="star" data-value="1"
+												onclick="submitRating(1, this)">★</span> <span class="star"
+												data-value="2" onclick="submitRating(2, this)">★</span> <span
+												class="star" data-value="3" onclick="submitRating(3, this)">★</span>
+											<span class="star" data-value="4"
+												onclick="submitRating(4, this)">★</span> <span class="star"
+												data-value="5" onclick="submitRating(5, this)">★</span>
+										</div>
+
 
 									</div>
 
@@ -190,7 +230,7 @@
 	<script
 		src="<c:url value='/resources/store/assets/js/swiper-bundle.min.js'/>"></script>
 	<script src="<c:url value='/resources/store/assets/js/main.js'/>"></script>
-<script type="text/javascript">
+	<script type="text/javascript">
     // Hàm gửi đánh giá lên máy chủ
     // Hàm gửi đánh giá lên máy chủ
 function submitRating(rating, starElement) {
@@ -199,6 +239,15 @@ function submitRating(rating, starElement) {
     const productId = container.getAttribute('data-product-id');
     const orderId = container.getAttribute('data-order-id');
     const customerId = "${customerEntity.id}";
+
+    // Lấy trạng thái của đơn hàng từ thuộc tính data-order-state
+    const orderState = container.getAttribute('data-order-state');
+
+    // Kiểm tra trạng thái đơn hàng
+    if (orderState != 3) {  // Trạng thái 3 là Đã hoàn thành
+        alert('Chỉ có thể đánh giá sản phẩm khi đơn hàng đã hoàn thành.');
+        return;
+    }
 
     // Cập nhật giao diện sao ngay lập tức
     updateStars(rating, productId, orderId);
@@ -225,6 +274,7 @@ function submitRating(rating, starElement) {
         }
     }).catch(error => console.error('Error:', error));
 }
+
 
 
 

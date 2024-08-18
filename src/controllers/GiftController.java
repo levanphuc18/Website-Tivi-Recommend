@@ -401,15 +401,15 @@ public class GiftController {
 
 	@RequestMapping(value = "/google-sign-in", method = RequestMethod.GET)
 	public String googleSignIn(@RequestParam("code") String code, Model model, HttpServletRequest request, HttpServletResponse response) {
-//	    System.out.println("Authorization Code: " + code);
+	    System.out.println("Authorization Code: " + code);
 	    GoogleLogin gg = new GoogleLogin();
 	    try {
 	        String accessToken = gg.getToken(code);
 	        CustomerGoogleDto customer = gg.getCustomerInfo(accessToken);
-//	        System.out.println("Access Token: " + accessToken);
-//	        System.out.println("Customer Info: " + customer.getEmail());
-//	        System.out.println("Customer fn: " + customer.getGiven_name());
-//	        System.out.println("Customer ln: " + customer.getFamily_name());
+	        System.out.println("Access Token: " + accessToken);
+	        System.out.println("Customer Info: " + customer.getEmail());
+	        System.out.println("Customer fn: " + customer.getGiven_name());
+	        System.out.println("Customer ln: " + customer.getFamily_name());
 	        Methods method = new Methods(factory);
 	        String email = customer.getEmail().trim();
 	        

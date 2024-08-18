@@ -29,7 +29,7 @@ public class InvoiceDAO extends DAO {
 	// GET INVOICES FROM DB
 	public Invoices getInvoices() throws IOException {
 		Session session = factory.openSession();
-		String hql = "FROM InvoiceEntity";
+		String hql = "FROM InvoiceEntity ORDER BY date DESC";
 		Query query = session.createQuery(hql);
 		List<InvoiceEntity> list = query.list();
 		Invoices invoices = new Invoices(list);
